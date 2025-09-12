@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Selection - SatYield</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1B3B2F;
+            color: #F5F5F5;
+        }
+
+        .header {
+            background: #2E4635;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #BDBDBD, #388E3C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: #2E4635;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: #F5F5F5;
+            margin-bottom: 1rem;
+        }
+
+        .page-title p {
+            color: #BDBDBD;
+            font-size: 1.1rem;
+        }
+
+        .form-container {
+            background: #2E4635;
+            border-radius: 15px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 0 1rem;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .step.active .step-number {
+            background: #FBC02D;
+            color: #2E4635;
+        }
+
+        .step.completed .step-number {
+            background: #28a745;
+            color: #2E4635;
+        }
+
+        .step-label {
+            color: #BDBDBD;
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: #FBC02D;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: #F5F5F5;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #FBC02D;
+        }
+
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .city-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .city-card:hover {
+            border-color: #FBC02D;
+            transform: translateY(-2px);
+        }
+
+        .city-card.selected {
+            border-color: #FBC02D;
+            background: #fff5f0;
+        }
+
+        .city-name {
+            font-weight: 600;
+            color: #F5F5F5;
+            margin-bottom: 0.5rem;
+        }
+
+        .city-state {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .season-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .season-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .season-card:hover {
+            border-color: #FBC02D;
+            transform: translateY(-2px);
+        }
+
+        .season-card.selected {
+            border-color: #FBC02D;
+            background: #fff5f0;
+        }
+
+        .season-name {
+            font-weight: 600;
+            color: #F5F5F5;
+            margin-bottom: 0.5rem;
+        }
+
+        .season-period {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .area-input-group {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .unit-select {
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            background: #2E4635;
+            font-size: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #2E4635;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            color: #2E4635;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .summary-card {
+            background: #1B3B2F;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #BDBDBD;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: #F5F5F5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .form-container {
+                padding: 2rem;
+            }
+
+            .step-indicator {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .step {
+                margin: 0;
+            }
+
+            .city-grid, .season-options {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>SmartKisan</h1>
+        </div>
+        <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Where do you farm? 🌾</h1>
+            <p>Tell us about your land and we'll suggest the best crops for you. It's like having a farming expert in your pocket!</p>
+        </div>
+
+        <div class="form-container">
+            <div class="step-indicator">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Pick Your City</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">What Season?</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">How Big?</div>
+                </div>
+            </div>
+
+            <form id="cityForm">
+                <!-- Step 1: City Selection -->
+                <div class="form-step active" id="formStep1">
+                    <div class="form-group">
+                        <label>Where's your farm? 🏞️</label>
+                        <div class="city-grid">
+                            <div class="city-card" data-city="mumbai">
+                                <div class="city-name">Mumbai</div>
+                                <div class="city-state">Maharashtra</div>
+                            </div>
+                            <div class="city-card" data-city="pune">
+                                <div class="city-name">Pune</div>
+                                <div class="city-state">Maharashtra</div>
+                            </div>
+                            <div class="city-card" data-city="nagpur">
+                                <div class="city-name">Nagpur</div>
+                                <div class="city-state">Maharashtra</div>
+                            </div>
+                            <div class="city-card" data-city="bangalore">
+                                <div class="city-name">Bangalore</div>
+                                <div class="city-state">Karnataka</div>
+                            </div>
+                            <div class="city-card" data-city="hyderabad">
+                                <div class="city-name">Hyderabad</div>
+                                <div class="city-state">Telangana</div>
+                            </div>
+                            <div class="city-card" data-city="chennai">
+                                <div class="city-name">Chennai</div>
+                                <div class="city-state">Tamil Nadu</div>
+                            </div>
+                            <div class="city-card" data-city="delhi">
+                                <div class="city-name">Delhi</div>
+                                <div class="city-state">Delhi</div>
+                            </div>
+                            <div class="city-card" data-city="ahmedabad">
+                                <div class="city-name">Ahmedabad</div>
+                                <div class="city-state">Gujarat</div>
+                            </div>
+                            <div class="city-card" data-city="kolkata">
+                                <div class="city-name">Kolkata</div>
+                                <div class="city-state">West Bengal</div>
+                            </div>
+                            <div class="city-card" data-city="jaipur">
+                                <div class="city-name">Jaipur</div>
+                                <div class="city-state">Rajasthan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Season Selection -->
+                <div class="form-step" id="formStep2">
+                    <div class="form-group">
+                        <label>What season are you planning for? 🌱</label>
+                        <div class="season-options">
+                            <div class="season-card" data-season="kharif">
+                                <div class="season-name">Kharif</div>
+                                <div class="season-period">June - October</div>
+                            </div>
+                            <div class="season-card" data-season="rabi">
+                                <div class="season-name">Rabi</div>
+                                <div class="season-period">October - March</div>
+                            </div>
+                            <div class="season-card" data-season="summer">
+                                <div class="season-name">Summer</div>
+                                <div class="season-period">March - June</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Area Input -->
+                <div class="form-step" id="formStep3">
+                    <div class="form-group">
+                        <label>How much land do you have? 📏</label>
+                        <div class="area-input-group">
+                            <input type="number" id="areaSize" placeholder="How many?" min="0.1" step="0.1" required>
+                            <select id="areaUnit" class="unit-select">
+                                <option value="acres">Acres</option>
+                                <option value="hectares">Hectares</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-title">Selection Summary</div>
+                        <div class="summary-item">
+                            <span class="summary-label">City:</span>
+                            <span class="summary-value" id="summaryCity">Not selected</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Season:</span>
+                            <span class="summary-value" id="summarySeason">Not selected</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Area:</span>
+                            <span class="summary-value" id="summaryArea">Not entered</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" disabled>Previous</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">Next</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">Get Crop Recommendations</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
+        let selectedCity = '';
+        let selectedSeason = '';
+        let selectedArea = '';
+
+        // City selection
+        document.querySelectorAll('.city-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.city-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedCity = this.dataset.city;
+                updateSummary();
+            });
+        });
+
+        // Season selection
+        document.querySelectorAll('.season-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.season-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedSeason = this.dataset.season;
+                updateSummary();
+            });
+        });
+
+        // Area input
+        document.getElementById('areaSize').addEventListener('input', function() {
+            selectedArea = this.value + ' ' + document.getElementById('areaUnit').value;
+            updateSummary();
+        });
+
+        document.getElementById('areaUnit').addEventListener('change', function() {
+            const areaValue = document.getElementById('areaSize').value;
+            if (areaValue) {
+                selectedArea = areaValue + ' ' + this.value;
+                updateSummary();
+            }
+        });
+
+        function changeStep(direction) {
+            const prevStep = currentStep;
+            currentStep += direction;
+
+            if (currentStep < 1) currentStep = 1;
+            if (currentStep > totalSteps) currentStep = totalSteps;
+
+            // Update step indicators
+            document.querySelectorAll('.step').forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                } else if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Show/hide form steps
+            document.querySelectorAll('.form-step').forEach((step, index) => {
+                step.classList.remove('active');
+                if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Update buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            prevBtn.disabled = currentStep === 1;
+            
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+            } else {
+                nextBtn.style.display = 'inline-block';
+                submitBtn.style.display = 'none';
+            }
+
+            // Validate current step before proceeding
+            if (direction > 0) {
+                if (currentStep === 2 && !selectedCity) {
+                    alert('Hey! Please pick your city first - we need to know where you farm!');
+                    currentStep = prevStep;
+                    return;
+                }
+                if (currentStep === 3 && !selectedSeason) {
+                    alert('Oops! Please choose a season first - we need to know when you want to plant!');
+                    currentStep = prevStep;
+                    return;
+                }
+            }
+        }
+
+        function updateSummary() {
+            document.getElementById('summaryCity').textContent = selectedCity || 'Not selected';
+            document.getElementById('summarySeason').textContent = selectedSeason || 'Not selected';
+            document.getElementById('summaryArea').textContent = selectedArea || 'Not entered';
+        }
+
+        // Form submission
+        document.getElementById('cityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedCity || !selectedSeason || !document.getElementById('areaSize').value) {
+                alert('Almost there! Please fill in all the details so we can help you better!');
+                return;
+            }
+
+            // Store selection data
+            const selectionData = {
+                city: selectedCity,
+                season: selectedSeason,
+                area: document.getElementById('areaSize').value,
+                unit: document.getElementById('areaUnit').value
+            };
+
+            localStorage.setItem('farmerSelection', JSON.stringify(selectionData));
+
+            alert('Selection saved! Redirecting to crop recommendations...');
+            window.location.href = 'crop-prediction.html';
+        });
+    </script>
+</body>
+</html>

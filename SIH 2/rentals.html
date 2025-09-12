@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Rentals - SatYield</title>
+    <link rel="stylesheet" href="universal-translate.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: linear-gradient(135deg, rgba(27, 59, 47, 0.85), rgba(46, 70, 53, 0.75)), 
+                        url('https://images.unsplash.com/photo-1500595046743-cd271d694d30?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat fixed;
+            color: #333333; 
+            min-height: 100vh;
+        }
+
+        .header { 
+            background: rgba(27, 59, 47, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo h1 { 
+            font-size: 1.8rem; 
+            background: linear-gradient(45deg, #66BB6A, #FBC02D); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .back-btn { 
+            background: linear-gradient(135deg, #4CAF50, #66BB6A); 
+            color: #FFFFFF; 
+            border: none; 
+            padding: 0.7rem 1.5rem; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .back-btn:hover { 
+            background: linear-gradient(135deg, #FBC02D, #FFD54F); 
+            color: #1B3B2F;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 192, 45, 0.4);
+        }
+
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 2rem;
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .title { 
+            font-size: 3.2rem; 
+            color: #FFFFFF;
+            font-weight: 900; 
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #66BB6A, #FBC02D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle { 
+            margin-bottom: 2rem; 
+            color: #F5F5F5;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .filter { 
+            background: rgba(46, 70, 53, 0.9);
+            backdrop-filter: blur(15px);
+            color: #FFFFFF; 
+            border-radius: 20px; 
+            padding: 2rem; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr auto; 
+            gap: 1.5rem; 
+            align-items: end; 
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .form-group label { 
+            color: #F5F5F5; 
+            font-weight: 600; 
+            font-size: 1rem; 
+            display: block; 
+            margin-bottom: 0.6rem;
+        }
+        
+        .form-group select { 
+            width: 100%; 
+            padding: 1rem; 
+            border: 2px solid rgba(255,255,255,0.2); 
+            border-radius: 15px; 
+            font-size: 1rem;
+            background: rgba(255,255,255,0.1);
+            color: #333;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #66BB6A;
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .search-btn { 
+            background: linear-gradient(135deg, #4CAF50, #66BB6A); 
+            color: #FFFFFF; 
+            border: none; 
+            padding: 1rem 2rem; 
+            border-radius: 15px; 
+            font-weight: 800; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+            font-size: 1rem;
+        }
+        
+        .search-btn:hover { 
+            background: linear-gradient(135deg, #FBC02D, #FFD54F); 
+            color: #1B3B2F;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(251, 192, 45, 0.4);
+        }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 2rem;
+        }
+        
+        .card { 
+            background: rgba(46, 70, 53, 0.95);
+            backdrop-filter: blur(15px);
+            color: #FFFFFF; 
+            border-radius: 20px; 
+            padding: 1.5rem; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1rem; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            border-color: rgba(102, 187, 106, 0.5);
+        }
+        .vendor { display:flex; gap:0.8rem; align-items:center; }
+        .avatar { width:46px; height:46px; border-radius:50%; background:#1B3B2F; display:grid; place-items:center; font-size:1.2rem; }
+        .v-name { color:#F5F5F5; font-weight:800; }
+        .equip { font-size:0.95rem; color:#E0E0E0; }
+        .meta { display:flex; gap:0.75rem; font-size:0.9rem; }
+        .badge { background:#1B3B2F; color:#F5F5F5; padding:0.25rem 0.55rem; border-radius: 999px; font-size:0.8rem; }
+        .price { font-weight:900; color:#FBC02D; }
+        .book { 
+            margin-top: auto; 
+            background: linear-gradient(135deg, #66BB6A, #FBC02D); 
+            color: #1B3B2F; 
+            border: none; 
+            padding: 1rem 1.5rem; 
+            border-radius: 12px; 
+            font-weight: 800; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 187, 106, 0.3);
+            font-size: 0.95rem;
+        }
+        
+        .book:hover {
+            background: linear-gradient(135deg, #FBC02D, #FFD54F);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 192, 45, 0.4);
+        }
+
+        .equip-img { 
+            width: 100%; 
+            height: 200px; 
+            border-radius: 15px; 
+            object-fit: cover; 
+            background: linear-gradient(135deg, #1B3B2F, #2E4635);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .card:hover .equip-img {
+            transform: scale(1.05);
+        }
+        
+        .equip-title { 
+            color: #F5F5F5; 
+            font-weight: 800; 
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .muted { 
+            opacity: 0.9;
+            color: #E0E0E0;
+        }
+
+        .empty { 
+            text-align: center; 
+            padding: 3rem; 
+            opacity: 0.9;
+            background: rgba(46, 70, 53, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            color: #F5F5F5;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) { 
+            .filter { 
+                grid-template-columns: 1fr;
+                padding: 1.5rem;
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .hero-section {
+                padding: 2rem 0;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.3s; }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><h1>SatYield</h1></div>
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">← Back</button>
+    </header>
+
+    <div class="container">
+        <div class="hero-section">
+            <div class="title">🚜 Find Equipment Near You!</div>
+            <div class="subtitle">Why buy when you can rent? Find tractors, harvesters & more from local farmers. Real equipment, real prices, real savings!</div>
+        </div>
+
+        <div class="filter">
+            <div class="form-group">
+                <label for="stateSel">State</label>
+                <select id="stateSel" onchange="populateCities()">
+                    <option value="">Select State</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="citySel">City</label>
+                <select id="citySel">
+                    <option value="">Select City</option>
+                </select>
+            </div>
+            <button class="search-btn" onclick="searchRentals()">🔍 Find Equipment</button>
+        </div>
+
+        <div id="results" class="grid"></div>
+        <div id="empty" class="empty" style="display:none;">No listings found. Try another city.</div>
+    </div>
+
+    <script>
+        // Simple dataset for demo
+        const cityMap = {
+            'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Aurangabad'],
+            'Karnataka': ['Bangalore', 'Mysore', 'Mangalore', 'Hubli'],
+            'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot'],
+            'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota']
+        };
+
+        const listings = [
+            { state:'Maharashtra', city:'Pune', vendor:'AgroHire Pune', equip:'Tractor (45 HP)', rateHr:650, rateDay:4200, rating:4.6 },
+            { state:'Maharashtra', city:'Pune', vendor:'GreenHarvest', equip:'Rotary Tiller', rateHr:500, rateDay:3200, rating:4.5 },
+            { state:'Maharashtra', city:'Mumbai', vendor:'Coastal Agro', equip:'Mini Harvester', rateHr:1200, rateDay:8000, rating:4.2 },
+            { state:'Karnataka', city:'Bangalore', vendor:'FarmMate', equip:'Seeder/Planter', rateHr:700, rateDay:4500, rating:4.7 },
+            { state:'Gujarat', city:'Ahmedabad', vendor:'Khedut Rental', equip:'Sprayer (Power)', rateHr:350, rateDay:2200, rating:4.3 },
+            { state:'Rajasthan', city:'Jaipur', vendor:'Desert Agro', equip:'Tractor (50 HP)', rateHr:700, rateDay:4700, rating:4.4 },
+            { state:'Maharashtra', city:'Nagpur', vendor:'Vidarbha Agro', equip:'Combine Harvester', rateHr:1800, rateDay:12000, rating:4.5 },
+            { state:'Karnataka', city:'Mysore', vendor:'Mysore Agro Rent', equip:'Baler', rateHr:900, rateDay:6200, rating:4.3 },
+            { state:'Gujarat', city:'Vadodara', vendor:'Baroda Kisan', equip:'Disc Plough', rateHr:550, rateDay:3600, rating:4.4 },
+            { state:'Rajasthan', city:'Udaipur', vendor:'Lake City Agro', equip:'Cultivator', rateHr:450, rateDay:3000, rating:4.2 },
+            { state:'Maharashtra', city:'Nashik', vendor:'Grapes Valley Rentals', equip:'Power Weeder', rateHr:400, rateDay:2600, rating:4.6 },
+            { state:'Gujarat', city:'Surat', vendor:'Surat Agro Support', equip:'Water Tanker', rateHr:500, rateDay:3200, rating:4.1 }
+        ];
+
+        const equipImages = {
+            'Tractor (45 HP)': 'one.png',
+            'Tractor (50 HP)': 'two.png',
+            'Mini Harvester': 'three.png',
+            'Rotary Tiller': 'four.png',
+            'Seeder/Planter': 'five.png',
+            'Sprayer (Power)': 'six.png',
+            'Combine Harvester': 'seven.png',
+            'Baler': 'eight.png',
+            'Disc Plough': 'nine.png',
+            'Cultivator': 'ten.png',
+            'Power Weeder': 'eleven.png',
+            'Water Tanker': 'twelen.png'
+        };
+
+        // Populate states
+        (function init(){
+            const stateSel = document.getElementById('stateSel');
+            Object.keys(cityMap).forEach(s => {
+                const opt = document.createElement('option'); opt.value = s; opt.textContent = s; stateSel.appendChild(opt);
+            });
+        })();
+
+        function populateCities(){
+            const state = document.getElementById('stateSel').value;
+            const citySel = document.getElementById('citySel');
+            citySel.innerHTML = '<option value="">Select City</option>';
+            (cityMap[state] || []).forEach(c => { const opt = document.createElement('option'); opt.value = c; opt.textContent = c; citySel.appendChild(opt); });
+        }
+
+        function searchRentals(){
+            const state = document.getElementById('stateSel').value;
+            const city = document.getElementById('citySel').value;
+            const container = document.getElementById('results');
+            const empty = document.getElementById('empty');
+            container.innerHTML = '';
+            const matches = listings.filter(l => (!state || l.state===state) && (!city || l.city===city));
+            if(matches.length === 0){ empty.style.display='block'; return; } else { empty.style.display='none'; }
+
+            // Group by equipment type and show up to 4 options for the chosen city
+            const byEquip = {};
+            matches.forEach(m => { if(!byEquip[m.equip]) byEquip[m.equip]=[]; byEquip[m.equip].push(m); });
+            const eqList = Object.keys(byEquip).slice(0, 4);
+            const cards = eqList.map(eq => {
+                const count = byEquip[eq].length;
+                const img = equipImages[eq] || 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1280&auto=format&fit=crop';
+                const link = `equipment.html?state=${encodeURIComponent(state)}&city=${encodeURIComponent(city)}&equip=${encodeURIComponent(eq)}`;
+                return `
+                    <div class="card" onclick="window.location.href='${link}'">
+                        <img class="equip-img" src="${img}" alt="${eq}">
+                        <div class="equip-title">${eq}</div>
+                        <div class="muted">${count} provider(s) available • ${city}, ${state}</div>
+                        <button class="book" onclick="window.location.href='${link}'; event.stopPropagation();">👀 See Who's Renting</button>
+                    </div>
+                `;
+            }).join('');
+            container.innerHTML = cards;
+        }
+
+        function book(data){ /* kept for future direct booking */ }
+    </script>
+    <script src="enhanced-translate.js"></script>
+</body>
+</html>
+
+

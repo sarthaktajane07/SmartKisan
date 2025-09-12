@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Details - SmartKisan</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Arial',sans-serif;background:#F5F5DC;color:#333333}
+        .header{background:#1B3B2F;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+        .logo h1{font-size:1.6rem;background:linear-gradient(45deg,#66BB6A,#FBC02D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .back-btn{background:#4CAF50;color:#FFFFFF;border:none;padding:.5rem 1rem;border-radius:6px;font-weight:800;cursor:pointer}
+        .back-btn:hover{background:#FBC02D;color:#1B3B2F}
+
+        .container{max-width:1200px;margin:0 auto;padding:2rem}
+        .title{font-size:2rem;color:#1B5E20;font-weight:800;margin:0 0 .5rem 0}
+        .sub{margin-bottom:1.25rem;color:#333333}
+
+        .media{background:#2E4635;color:#FFFFFF;border-radius:12px;padding:1rem;margin-bottom:1.5rem}
+        .media video{width:100%;height:420px;border-radius:10px;background:#000;object-fit:cover}
+
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+        .card{background:#2E4635;color:#FFFFFF;border-radius:12px;padding:1rem;box-shadow:0 5px 15px rgba(0,0,0,.1)}
+        .vendor{display:flex;gap:.8rem;align-items:center;margin-bottom:.5rem}
+        .avatar{width:46px;height:46px;border-radius:50%;background:#1B3B2F;display:grid;place-items:center}
+        .v-name{color:#F5F5F5;font-weight:800}
+        .meta{display:flex;gap:.6rem;font-size:.9rem;margin:.25rem 0 .75rem}
+        .badge{background:#1B3B2F;color:#F5F5F5;padding:.25rem .55rem;border-radius:999px;font-size:.8rem}
+        .price{font-weight:900;color:#FBC02D}
+        .book{margin-top:.6rem;background:linear-gradient(45deg,#66BB6A,#FBC02D);color:#1B3B2F;border:none;padding:.6rem .9rem;border-radius:8px;font-weight:800;cursor:pointer}
+
+        /* Booking modal */
+        .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:1000}
+        .modal{background:#2E4635;border-radius:12px;max-width:520px;width:92vw;padding:1.25rem;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+        .modal h3{color:#F5F5F5;margin-bottom:.5rem}
+        .m-sub{margin-bottom:1rem;color:#D9D9D9}
+        .row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+        .field{margin-bottom:.8rem}
+        .field label{display:block;margin-bottom:.35rem;color:#F5F5F5;font-size:.92rem;font-weight:600}
+        .field input,.field textarea{width:100%;padding:.8rem;border:2px solid #e1e5e9;border-radius:10px;font-size:1rem}
+        .actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.6rem}
+        .btn{border:none;border-radius:10px;padding:.7rem 1rem;font-weight:800;cursor:pointer}
+        .btn-primary{background:#4CAF50;color:#FFFFFF}
+        .btn-primary:hover{background:#FBC02D;color:#1B3B2F}
+        .btn-ghost{background:transparent;color:#F5F5F5;border:2px solid #F5F5F5}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo"><h1>Smartkisan</h1></div>
+        <button class="back-btn" onclick="history.back()">← Back</button>
+    </header>
+
+    <div class="container">
+        <div class="title" id="equipTitle">🚜 Equipment Details</div>
+        <div class="sub" id="equipSub">See it in action • Find local providers</div>
+        <div class="media">
+            <video id="equipVideo" controls poster="">
+                <source id="videoSrc" src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div id="providers" class="grid"></div>
+    </div>
+
+    <script>
+        // Same dataset as rentals page (simplified)
+        const listings=[
+            { state:'Maharashtra', city:'Pune', vendor:'AgroHire Pune', equip:'Tractor (45 HP)', rateHr:650, rateDay:4200, rating:4.6 },
+            { state:'Maharashtra', city:'Pune', vendor:'GreenHarvest', equip:'Rotary Tiller', rateHr:500, rateDay:3200, rating:4.5 },
+            { state:'Maharashtra', city:'Mumbai', vendor:'Coastal Agro', equip:'Mini Harvester', rateHr:1200, rateDay:8000, rating:4.2 },
+            { state:'Karnataka', city:'Bangalore', vendor:'FarmMate', equip:'Seeder/Planter', rateHr:700, rateDay:4500, rating:4.7 },
+            { state:'Gujarat', city:'Ahmedabad', vendor:'Khedut Rental', equip:'Sprayer (Power)', rateHr:350, rateDay:2200, rating:4.3 },
+            { state:'Rajasthan', city:'Jaipur', vendor:'Desert Agro', equip:'Tractor (50 HP)', rateHr:700, rateDay:4700, rating:4.4 },
+            { state:'Maharashtra', city:'Nagpur', vendor:'Vidarbha Agro', equip:'Combine Harvester', rateHr:1800, rateDay:12000, rating:4.5 },
+            { state:'Karnataka', city:'Mysore', vendor:'Mysore Agro Rent', equip:'Baler', rateHr:900, rateDay:6200, rating:4.3 },
+            { state:'Gujarat', city:'Vadodara', vendor:'Baroda Kisan', equip:'Disc Plough', rateHr:550, rateDay:3600, rating:4.4 },
+            { state:'Rajasthan', city:'Udaipur', vendor:'Lake City Agro', equip:'Cultivator', rateHr:450, rateDay:3000, rating:4.2 },
+            { state:'Maharashtra', city:'Nashik', vendor:'Grapes Valley Rentals', equip:'Power Weeder', rateHr:400, rateDay:2600, rating:4.6 },
+            { state:'Gujarat', city:'Surat', vendor:'Surat Agro Support', equip:'Water Tanker', rateHr:500, rateDay:3200, rating:4.1 }
+        ];
+
+        const equipVideos={
+            'Tractor (45 HP)':'https://cdn.coverr.co/videos/coverr-tractors-in-the-field-2755/1080p.mp4',
+            'Tractor (50 HP)':'https://cdn.coverr.co/videos/coverr-tractor-driving-in-the-field-6152/1080p.mp4',
+            'Mini Harvester':'https://cdn.coverr.co/videos/coverr-harvester-4330/1080p.mp4',
+            'Rotary Tiller':'https://cdn.coverr.co/videos/coverr-working-on-the-farm-4255/1080p.mp4',
+            'Seeder/Planter':'https://cdn.coverr.co/videos/coverr-farming-tractor-4071/1080p.mp4',
+            'Sprayer (Power)':'https://cdn.coverr.co/videos/coverr-farmer-spraying-crops-7409/1080p.mp4',
+            'Combine Harvester':'https://cdn.coverr.co/videos/coverr-the-harvester-works-while-the-sun-sets-8482/1080p.mp4',
+            'Baler':'https://cdn.coverr.co/videos/coverr-hay-bales-1851/1080p.mp4',
+            'Disc Plough':'https://cdn.coverr.co/videos/coverr-farm-plowing-9551/1080p.mp4',
+            'Cultivator':'https://cdn.coverr.co/videos/coverr-cultivating-the-soil-7849/1080p.mp4',
+            'Power Weeder':'https://cdn.coverr.co/videos/coverr-working-in-the-field-5189/1080p.mp4',
+            'Water Tanker':'https://cdn.coverr.co/videos/coverr-working-farm-tractor-3601/1080p.mp4'
+        };
+
+        const params=new URLSearchParams(location.search);
+        const state=params.get('state')||''; const city=params.get('city')||''; const equip=params.get('equip')||'';
+
+        document.getElementById('equipTitle').textContent=equip || 'Equipment';
+        document.getElementById('equipSub').textContent=`${city ? city+', ' : ''}${state}`;
+
+        const vid=equipVideos[equip];
+        if(vid){ document.getElementById('videoSrc').src=vid; document.getElementById('equipVideo').load(); }
+
+        const container=document.getElementById('providers');
+        const rows=listings.filter(l=>(!state||l.state===state)&&(!city||l.city===city)&&(!equip||l.equip===equip));
+        container.innerHTML = rows.map(l=>`
+            <div class="card">
+                <div class="vendor">
+                    <div class="avatar">🚜</div>
+                    <div>
+                        <div class="v-name">${l.vendor}</div>
+                        <div>${l.city}, ${l.state}</div>
+                    </div>
+                </div>
+                <div class="meta"><span class="badge">⭐ ${l.rating}</span><span class="badge">${equip}</span></div>
+                <div class="price">₹${l.rateHr}/hr • ₹${l.rateDay}/day</div>
+                <button class="book" onclick='openBooking(${JSON.stringify({vendor:""}).replace("{}", JSON.stringify(l))})'>📞 Book This One!</button>
+            </div>
+        `).join('') || '<div style="opacity:.85">No providers found for this equipment.</div>';
+
+        // Modal handling
+        function qs(id){return document.getElementById(id)}
+        function openBooking(l){
+            qs('bkVendor').textContent=l.vendor;
+            qs('bkEquip').textContent=equip;
+            qs('bkStateCity').textContent=`${city}, ${state}`;
+            qs('name').value=''; qs('phone').value=''; qs('date').value=''; qs('hours').value=''; qs('notes').value='';
+            qs('bkBtn').onclick=function(){ submitBooking(l) };
+            qs('backdrop').style.display='flex';
+        }
+        function closeBooking(){ qs('backdrop').style.display='none'; }
+        function submitBooking(l){
+            const payload={
+                vendor:l.vendor,equip:equip,state,city,
+                name:qs('name').value.trim(), phone:qs('phone').value.trim(), date:qs('date').value, hours:qs('hours').value,
+                notes:qs('notes').value.trim(), createdAt:new Date().toISOString()
+            };
+            if(!payload.name||!payload.phone||!payload.date||!payload.hours){ alert('Please fill name, phone, date and hours'); return; }
+            const all=JSON.parse(localStorage.getItem('rentalBookings')||'[]'); all.push(payload); localStorage.setItem('rentalBookings',JSON.stringify(all));
+            closeBooking();
+            // WhatsApp deep link (optional)
+            const msg=encodeURIComponent(`Rental request for ${payload.equip} on ${payload.date} (${payload.hours} hrs) at ${payload.city}, ${payload.state}. Name: ${payload.name}, Phone: ${payload.phone}. Vendor: ${payload.vendor}. Notes: ${payload.notes||'-'}`);
+            // window.open(`https://wa.me/?text=${msg}`,'_blank');
+            alert('Booking request saved. We will contact you shortly.');
+        }
+    </script>
+
+    <!-- Booking Modal -->
+    <div id="backdrop" class="modal-backdrop" onclick="if(event.target.id==='backdrop')closeBooking()">
+        <div class="modal">
+            <h3>📞 Book <span id="bkEquip"></span></h3>
+            <div class="m-sub"><span id="bkVendor"></span> • <span id="bkStateCity"></span></div>
+            <div class="row">
+                <div class="field"><label for="name">Your Name</label><input id="name" type="text" placeholder="Farmer Name"></div>
+                <div class="field"><label for="phone">Phone</label><input id="phone" type="tel" placeholder="98765 43210"></div>
+            </div>
+            <div class="row">
+                <div class="field"><label for="date">Date</label><input id="date" type="date"></div>
+                <div class="field"><label for="hours">Hours</label><input id="hours" type="number" min="1" step="1" placeholder="e.g., 4"></div>
+            </div>
+            <div class="field"><label for="notes">Notes</label><textarea id="notes" rows="3" placeholder="Any additional requirements"></textarea></div>
+            <div class="actions">
+                <button class="btn btn-ghost" onclick="closeBooking()">Cancel</button>
+                <button id="bkBtn" class="btn btn-primary">✅ Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SatYield</title>
+    <link rel="stylesheet" href="universal-translate.css">
+    <script src="i18n.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('farming-field-bg.jpg') center/cover no-repeat fixed;
+            background-color: #2E4635;
+            color: #333333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(46, 70, 53, 0.7);
+            z-index: -1;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            color: #2E4635;
+            padding: 3rem;
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #FBC02D, #f7931e);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #4CAF50, #FBC02D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo p {
+            color: #666;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2E4635;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(46, 70, 53, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            color: #1B3B2F;
+            box-shadow: 0 10px 30px rgba(251, 192, 45, 0.4);
+        }
+
+        .otp-btn {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196F3;
+            border: 2px solid #2196F3;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .otp-btn:hover {
+            background: #2196F3;
+            color: #FFFFFF;
+            border-color: #2196F3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #66BB6A;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(46, 70, 53, 0.2);
+        }
+
+        .divider span {
+            background: rgba(255, 255, 255, 0.95);
+            color: #666;
+            padding: 0 1rem;
+            font-weight: 500;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .signup-link a {
+            color: #FBC02D;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .otp-section {
+            display: none;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            border: 2px solid rgba(46, 70, 53, 0.2);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Language switcher */
+        .lang-switcher { position: absolute; top: 1rem; right: 1rem; }
+        .lang-switcher-btn { 
+            background: rgba(255, 255, 255, 0.9); 
+            border: 1px solid #e1e5e9; 
+            border-radius: 8px; 
+            padding: 0.5rem 1rem; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            font-size: 0.9rem; 
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        .lang-switcher-btn:hover { background: rgba(255, 255, 255, 1); border-color: #4CAF50; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2); }
+        .lang-switcher-btn::after { content: '▼'; font-size: 0.7rem; }
+        .lang-dropdown { 
+            position: absolute; 
+            top: 100%; 
+            right: 0; 
+            background: white; 
+            border: 1px solid #e1e5e9; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            display: none; 
+            min-width: 150px; 
+            z-index: 1000;
+        }
+        .lang-dropdown.show { display: block; }
+        .lang-option { 
+            padding: 0.75rem 1rem; 
+            cursor: pointer; 
+            border-bottom: 1px solid #f0f0f0; 
+            transition: background 0.2s ease;
+        }
+        .lang-option:last-child { border-bottom: none; }
+        .lang-option:hover { background: #f8f9fa; }
+        .lang-option.active { background: rgba(76, 175, 80, 0.1); color: #4CAF50; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher">
+        <button class="lang-switcher-btn" onclick="toggleLangDropdown()">
+            <span id="currentLang">English</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+            <div class="lang-option" data-lang="en" onclick="switchLanguage('en')">English</div>
+            <div class="lang-option" data-lang="mr" onclick="switchLanguage('mr')">मराठी</div>
+            <div class="lang-option" data-lang="hi" onclick="switchLanguage('hi')">हिन्दी</div>
+            <div class="lang-option" data-lang="or" onclick="switchLanguage('or')">ଓଡିଆ</div>
+            <div class="lang-option" data-lang="pa" onclick="switchLanguage('pa')">ਪੰਜਾਬੀ</div>
+            <div class="lang-option" data-lang="hr" onclick="switchLanguage('hr')">हरियाणवी</div>
+        </div>
+    </div>
+    
+    <div class="auth-container">
+        <div class="logo">
+            <h1>Welcome back! 👋</h1>
+            <p>Ready to check on your crops?</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="phone" data-i18n="auth.phone">Phone Number or Email</label>
+                <input type="text" id="phone" name="phone" placeholder="Your phone or email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password" data-i18n="auth.password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Your secret password" required>
+            </div>
+
+            <button type="submit" class="login-btn" data-i18n="auth.login">Let's Go! 🚀</button>
+        </form>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <button class="otp-btn" onclick="showOTP()" data-i18n="auth.otpLogin">📱 Login with OTP (Easier!)</button>
+
+        <div class="otp-section" id="otpSection">
+            <div class="form-group">
+                <label for="otpPhone" data-i18n="auth.phone">Phone Number</label>
+                <input type="tel" id="otpPhone" placeholder="Your mobile number" required>
+            </div>
+            
+            <button class="otp-btn" onclick="sendOTP()">📤 Send OTP</button>
+            
+            <div class="otp-inputs">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+                <input type="text" class="otp-input" maxlength="1">
+            </div>
+            
+            <button class="login-btn" onclick="verifyOTP()">✅ Verify & Login</button>
+        </div>
+
+        <div class="signup-link">
+            <p data-i18n="auth.dontHaveAccount">New here? <a href="signup.html" data-i18n="auth.signupHere">Join 10,000+ farmers! 🌱</a></p>
+        </div>
+    </div>
+
+    <script>
+        function showOTP() {
+            document.getElementById('otpSection').style.display = 'block';
+            document.querySelector('.otp-btn').style.display = 'none';
+        }
+
+        function sendOTP() {
+            const phone = document.getElementById('otpPhone').value;
+            if (phone) {
+                alert('📱 OTP sent to ' + phone + '\n\nCheck your messages!');
+            } else {
+                alert('Oops! Please enter your phone number first');
+            }
+        }
+
+        function verifyOTP() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            let otp = '';
+            otpInputs.forEach(input => {
+                otp += input.value;
+            });
+            
+            if (otp.length === 6) {
+                alert('🎉 Welcome back! Taking you to your dashboard...');
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Hmm, looks like the OTP is incomplete. Please check all 6 digits!');
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            
+            if (phone && password) {
+                alert('🎉 Login successful! Welcome back to your farming dashboard!');
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Hey! Please fill in both your phone/email and password');
+            }
+        });
+
+        // OTP input navigation
+        document.querySelectorAll('.otp-input').forEach((input, index) => {
+            input.addEventListener('input', function() {
+                if (this.value.length === 1 && index < 5) {
+                    document.querySelectorAll('.otp-input')[index + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                    document.querySelectorAll('.otp-input')[index - 1].focus();
+                }
+            });
+        });
+
+        // Language switcher functions
+        function toggleLangDropdown() {
+            const dropdown = document.getElementById('langDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function switchLanguage(langCode) {
+            if(window.SYI18N){
+                window.SYI18N.setLang(langCode);
+                window.SYI18N.translatePage();
+                updateLangSwitcher(langCode);
+            }
+            document.getElementById('langDropdown').classList.remove('show');
+        }
+
+        function updateLangSwitcher(langCode) {
+            const currentLangSpan = document.getElementById('currentLang');
+            const langs = window.SYI18N ? window.SYI18N.languages : { en: 'English' };
+            currentLangSpan.textContent = langs[langCode] || 'English';
+            
+            // Update active state
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.classList.remove('active');
+                if(option.getAttribute('data-lang') === langCode) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize language switcher
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentLang = window.SYI18N ? window.SYI18N.getLang() : 'en';
+            updateLangSwitcher(currentLang);
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const switcher = document.querySelector('.lang-switcher');
+            const dropdown = document.getElementById('langDropdown');
+            if (switcher && dropdown && !switcher.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    </script>
+    <script src="enhanced-translate.js"></script>
+</body>
+</html>

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Insights - SmartKisan</title>
+    <link rel="stylesheet" href="universal-translate.css">
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""
+    />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, rgba(27, 59, 47, 0.8), rgba(46, 70, 53, 0.7)), 
+                        url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat fixed;
+            color: #333333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(27, 59, 47, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 1rem 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #66BB6A, #FBC02D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #66BB6A, #4CAF50);
+            color: #FFFFFF;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 187, 106, 0.3);
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #FBC02D, #FFD54F);
+            color: #1B3B2F;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 192, 45, 0.4);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #66BB6A, #FBC02D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .page-title p {
+            color: #F5F5F5;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .location-selector {
+            background: rgba(46, 70, 53, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .selector-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .selector-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #F5F5F5;
+            font-weight: 600;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #FF6B35;
+            background: rgba(255,255,255,1);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .get-data-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .get-data-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #FBC02D, #FFD54F);
+            color: #1B3B2F;
+            box-shadow: 0 8px 25px rgba(251, 192, 45, 0.4);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .map-container {
+            background: rgba(46, 70, 53, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .map-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #2E4635 0%, #1B3B2F 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #F5F5F5;
+            font-size: 1.2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Leaflet map container inside placeholder */
+        #leafletMap {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .map-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="400" height="300" fill="url(%23grid)"/><circle cx="200" cy="150" r="80" fill="rgba(255,255,255,0.1)"/><circle cx="200" cy="150" r="40" fill="rgba(255,255,255,0.2)"/><circle cx="200" cy="150" r="20" fill="rgba(255,255,255,0.3)"/></svg>') center/cover;
+        }
+
+        .map-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .weather-data {
+            background: rgba(46, 70, 53, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .weather-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .weather-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .weather-card {
+            background: rgba(27, 59, 47, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .weather-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .weather-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FBC02D;
+            margin-bottom: 0.2rem;
+        }
+
+        .weather-label {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .forecast-section {
+            background: rgba(27, 59, 47, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .forecast-title {
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1rem;
+        }
+
+        .forecast-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(245,245,245,0.08);
+        }
+
+        .forecast-item:last-child {
+            border-bottom: none;
+        }
+
+        .forecast-day {
+            font-weight: 600;
+            color: #F5F5F5;
+        }
+
+        .forecast-temp {
+            color: #BDBDBD;
+        }
+
+        .forecast-condition {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .insights-section {
+            background: rgba(46, 70, 53, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .insights-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .insight-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .insight-card {
+            background: rgba(27, 59, 47, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #FBC02D;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .insight-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .insight-card.warning {
+            border-left-color: #dc3545;
+            background: #2E4635;
+        }
+
+        .insight-card.success {
+            border-left-color: #28a745;
+            background: #2E4635;
+        }
+
+        .insight-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-title {
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-description {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: #FBC02D;
+            color: #1B3B2F;
+        }
+
+        .btn-secondary {
+            background: #2E4635;
+            color: #F5F5F5;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: #BDBDBD;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FBC02D;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .selector-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .weather-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .insight-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>Smartkisan</h1>
+        </div>
+        <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>What's the weather up to? 🌤️</h1>
+            <p>Check your local weather and get smart farming tips. Mother Nature can be tricky, but we've got you covered!</p>
+        </div>
+
+        <div class="location-selector">
+            <div class="selector-title">Select Your Location</div>
+            <div class="selector-grid">
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <select id="state" onchange="updateCities()">
+                        <option value="">Select State</option>
+                        <option value="maharashtra">Maharashtra</option>
+                        <option value="karnataka">Karnataka</option>
+                        <option value="tamil-nadu">Tamil Nadu</option>
+                        <option value="gujarat">Gujarat</option>
+                        <option value="rajasthan">Rajasthan</option>
+                        <option value="punjab">Punjab</option>
+                        <option value="haryana">Haryana</option>
+                        <option value="uttar-pradesh">Uttar Pradesh</option>
+                        <option value="bihar">Bihar</option>
+                        <option value="west-bengal">West Bengal</option>
+                        <option value="andhra-pradesh">Andhra Pradesh</option>
+                        <option value="telangana">Telangana</option>
+                        <option value="kerala">Kerala</option>
+                        <option value="madhya-pradesh">Madhya Pradesh</option>
+                        <option value="orissa">Orissa</option>
+                        <option value="assam">Assam</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <select id="city">
+                        <option value="">Select City First</option>
+                    </select>
+                </div>
+            </div>
+            <button class="get-data-btn" onclick="getWeatherData()">🌡️ Check My Weather</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Checking the skies for you... ☁️</p>
+        </div>
+
+        <div class="main-content" id="mainContent" style="display: none;">
+            <div class="map-container">
+                <div class="map-title">📍 Location Map</div>
+                <div class="map-placeholder">
+                    <div id="leafletMap"></div>
+                </div>
+            </div>
+
+            <div class="weather-data">
+                <div class="weather-title">🌤️ Current Weather</div>
+                <div class="weather-cards" id="weatherCards">
+
+                </div>
+                <div class="forecast-section">
+                    <div class="forecast-title">7-Day Forecast</div>
+                    <div id="forecastList">
+ 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="insights-section" id="insightsSection" style="display: none;">
+            <div class="insights-title">🔍 AI Climate Insights</div>
+            <div class="insight-cards" id="insightCards">
+  
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="downloadClimateReport()">Download Climate Report</button>
+            <button class="btn btn-primary" onclick="viewFinalDashboard()">View Complete Plan</button>
+            <button class="btn btn-secondary" onclick="viewSoilAnalysis()">Analyze Soil Image</button>
+            <button class="btn btn-secondary" onclick="goToGuidance()">View Farming Guidance</button>
+        </div>
+    </div>
+
+  
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="">
+    </script>
+    <script>
+        const cityData = {
+            'maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Aurangabad', 'Solapur', 'Amravati', 'Kolhapur'],
+            'karnataka': ['Bangalore', 'Mysore', 'Hubli', 'Mangalore', 'Belgaum', 'Gulbarga', 'Davanagere', 'Bellary'],
+            'tamil-nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tirunelveli', 'Erode', 'Vellore'],
+            'gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Gandhinagar', 'Nadiad'],
+            'rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Bikaner', 'Ajmer', 'Bharatpur', 'Alwar'],
+            'punjab': ['Chandigarh', 'Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali', 'Pathankot'],
+            'haryana': ['Gurgaon', 'Faridabad', 'Panipat', 'Karnal', 'Hisar', 'Sonipat', 'Rohtak', 'Ambala'],
+            'uttar-pradesh': ['Lucknow', 'Kanpur', 'Agra', 'Varanasi', 'Meerut', 'Allahabad', 'Bareilly', 'Ghaziabad'],
+            'bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Darbhanga', 'Purnia', 'Bihar Sharif', 'Arrah'],
+            'west-bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Bardhaman', 'Malda', 'Baharampur'],
+            'andhra-pradesh': ['Hyderabad', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Tirupati', 'Kadapa'],
+            'telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Khammam', 'Karimnagar', 'Ramagundam', 'Mahbubnagar', 'Nalgonda'],
+            'kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur', 'Palakkad', 'Malappuram', 'Kannur', 'Kollam'],
+            'madhya-pradesh': ['Bhopal', 'Indore', 'Gwalior', 'Jabalpur', 'Ujjain', 'Sagar', 'Dewas', 'Satna'],
+            'orissa': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Berhampur', 'Sambalpur', 'Puri', 'Balasore', 'Bhadrak'],
+            'assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur', 'Barpeta']
+        };
+
+        function updateCities() {
+            const state = document.getElementById('state').value;
+            const citySelect = document.getElementById('city');
+            
+            // Clear existing options
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            
+            // Debug log to check state value
+            console.log('Selected state:', state);
+            console.log('Available cities:', cityData[state]);
+            
+            if (state && cityData[state]) {
+                cityData[state].forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city.toLowerCase().replace(/\s+/g, '-');
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+                
+                // Enable city dropdown
+                citySelect.disabled = false;
+            } else {
+                // Disable city dropdown if no state selected
+                citySelect.disabled = true;
+            }
+        }
+
+       
+        let mapInstance;
+        let mapMarker;
+
+        const cityToCoords = {
+            'mumbai': [19.0760, 72.8777],
+            'pune': [18.5204, 73.8567],
+            'nagpur': [21.1458, 79.0882],
+            'nashik': [19.9975, 73.7898],
+            'aurangabad': [19.8762, 75.3433],
+            'solapur': [17.6599, 75.9064],
+            'amravati': [20.9333, 77.7500],
+            'kolhapur': [16.7050, 74.2433],
+            'bangalore': [12.9716, 77.5946],
+            'mysore': [12.2958, 76.6394],
+            'hubli': [15.3647, 75.1240],
+            'mangalore': [12.9141, 74.8560],
+            'chennai': [13.0827, 80.2707],
+            'coimbatore': [11.0168, 76.9558],
+            'madurai': [9.9252, 78.1198],
+            'hyderabad': [17.3850, 78.4867],
+            'visakhapatnam': [17.6868, 83.2185],
+            'vijayawada': [16.5062, 80.6480],
+            'ahmedabad': [23.0225, 72.5714],
+            'surat': [21.1702, 72.8311],
+            'vadodara': [22.3072, 73.1812],
+            'rajkot': [22.3039, 70.8022],
+            'jaipur': [26.9124, 75.7873],
+            'jodhpur': [26.2389, 73.0243],
+            'udaipur': [24.5854, 73.7125],
+            'ludhiana': [30.9000, 75.8573],
+            'chandigarh': [30.7333, 76.7794],
+            'gurgaon': [28.4595, 77.0266],
+            'faridabad': [28.4089, 77.3178],
+            'lucknow': [26.8467, 80.9462],
+            'kanpur': [26.4499, 80.3319],
+            'agra': [27.1767, 78.0081],
+            'varanasi': [25.3176, 82.9739],
+            'patna': [25.5941, 85.1376],
+            'kolkata': [22.5726, 88.3639],
+            'bhopal': [23.2599, 77.4126],
+            'indore': [22.7196, 75.8577]
+        };
+        function getWeatherData() {
+            const stateSel = document.getElementById('state');
+            const citySel = document.getElementById('city');
+            const state = stateSel.value;
+            const city = citySel.value;
+            
+            if (!state || !city) {
+                alert('Please select both state and city');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('insightsSection').style.display = 'none';
+
+            // First geocode and render the map, then show data
+            // Safety timeout in case geocode is slow or blocked
+            const failSafe = new Promise((resolve) => setTimeout(resolve, 3500));
+
+            Promise.race([geocodeAndRenderMap(stateSel, citySel), failSafe])
+                .then(() => {
+                    displayWeatherData(state, city);
+                    document.getElementById('loading').classList.remove('show');
+                    document.getElementById('mainContent').style.display = 'grid';
+                    document.getElementById('insightsSection').style.display = 'block';
+                })
+                .catch(() => {
+                    // If geocoding fails, still show data
+                    displayWeatherData(state, city);
+                    document.getElementById('loading').classList.remove('show');
+                    document.getElementById('mainContent').style.display = 'grid';
+                    document.getElementById('insightsSection').style.display = 'block';
+                });
+        }
+
+        // Use Nominatim to geocode and render Leaflet map
+        async function geocodeAndRenderMap(stateSel, citySel) {
+            const cityText = citySel.options[citySel.selectedIndex]?.text || citySel.value;
+            const stateText = stateSel.options[stateSel.selectedIndex]?.text || stateSel.value;
+            const query = encodeURIComponent(`${cityText}, ${stateText}, India`);
+            // Use fallback coordinates instantly if known
+            const fallback = cityToCoords[(cityText || '').toLowerCase()];
+            let lat, lon, display_name;
+            if (fallback) {
+                [lat, lon] = fallback;
+                display_name = `${cityText}, ${stateText}, India`;
+            } else {
+                const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1&email=hello@satyield.example`;
+                const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                const results = await response.json();
+                if (!Array.isArray(results) || results.length === 0) throw new Error('No result');
+                lat = parseFloat(results[0].lat);
+                lon = parseFloat(results[0].lon);
+                display_name = results[0].display_name;
+            }
+
+            // init map if needed
+            if (!mapInstance) {
+                mapInstance = L.map('leafletMap', { scrollWheelZoom: true });
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(mapInstance);
+            }
+
+            mapInstance.setView([lat, lon], 11);
+            if (mapMarker) mapMarker.remove();
+            mapMarker = L.marker([lat, lon]).addTo(mapInstance);
+            mapMarker.bindPopup(`<b>${cityText}</b><br>${display_name}`).openPopup();
+        }
+
+        function displayWeatherData(state, city) {
+            // Update map location (if placeholder text element exists)
+            const mapLocEl = document.getElementById('mapLocation');
+            if (mapLocEl) {
+                mapLocEl.textContent = `${city.charAt(0).toUpperCase() + city.slice(1)}, ${state.charAt(0).toUpperCase() + state.slice(1)}`;
+            }
+
+            // Generate mock weather data
+            const weatherData = generateMockWeatherData(city);
+            
+            // Display weather cards
+            document.getElementById('weatherCards').innerHTML = `
+                <div class="weather-card">
+                    <div class="weather-icon">🌡️</div>
+                    <div class="weather-value">${weatherData.temperature}°C</div>
+                    <div class="weather-label">Temperature</div>
+                </div>
+                <div class="weather-card">
+                    <div class="weather-icon">💧</div>
+                    <div class="weather-value">${weatherData.humidity}%</div>
+                    <div class="weather-label">Humidity</div>
+                </div>
+                <div class="weather-card">
+                    <div class="weather-icon">🌧️</div>
+                    <div class="weather-value">${weatherData.rainfall}mm</div>
+                    <div class="weather-label">Rainfall</div>
+                </div>
+                <div class="weather-card">
+                    <div class="weather-icon">💨</div>
+                    <div class="weather-value">${weatherData.windSpeed} km/h</div>
+                    <div class="weather-label">Wind Speed</div>
+                </div>
+            `;
+
+            // Display forecast
+            const forecastHTML = weatherData.forecast.map(day => `
+                <div class="forecast-item">
+                    <div class="forecast-day">${day.day}</div>
+                    <div class="forecast-temp">${day.temp}°C</div>
+                    <div class="forecast-condition">${day.condition}</div>
+                </div>
+            `).join('');
+            document.getElementById('forecastList').innerHTML = forecastHTML;
+
+            // Display insights
+            displayInsights(weatherData);
+        }
+
+        function generateMockWeatherData(city) {
+            const baseTemp = Math.floor(Math.random() * 15) + 20; // 20-35°C
+            const baseHumidity = Math.floor(Math.random() * 30) + 50; // 50-80%
+            const baseRainfall = Math.floor(Math.random() * 20) + 5; // 5-25mm
+            
+            return {
+                temperature: baseTemp,
+                humidity: baseHumidity,
+                rainfall: baseRainfall,
+                windSpeed: Math.floor(Math.random() * 15) + 5, // 5-20 km/h
+                forecast: [
+                    { day: 'Today', temp: baseTemp, condition: 'Sunny' },
+                    { day: 'Tomorrow', temp: baseTemp + 2, condition: 'Partly Cloudy' },
+                    { day: 'Day 3', temp: baseTemp - 1, condition: 'Cloudy' },
+                    { day: 'Day 4', temp: baseTemp + 1, condition: 'Light Rain' },
+                    { day: 'Day 5', temp: baseTemp - 2, condition: 'Sunny' },
+                    { day: 'Day 6', temp: baseTemp + 3, condition: 'Hot' },
+                    { day: 'Day 7', temp: baseTemp, condition: 'Partly Cloudy' }
+                ]
+            };
+        }
+
+        function displayInsights(weatherData) {
+            const insights = [];
+            
+            // Temperature insights
+            if (weatherData.temperature > 30) {
+                insights.push({
+                    type: 'warning',
+                    icon: '🌡️',
+                    title: 'High Temperature Alert',
+                    description: 'Temperatures are above 30°C. Consider providing shade and increasing irrigation frequency.'
+                });
+            } else if (weatherData.temperature < 15) {
+                insights.push({
+                    type: 'warning',
+                    icon: '❄️',
+                    title: 'Low Temperature Warning',
+                    description: 'Temperatures are below 15°C. Protect young plants from frost damage.'
+                });
+            } else {
+                insights.push({
+                    type: 'success',
+                    icon: '✅',
+                    title: 'Optimal Temperature',
+                    description: 'Temperature is ideal for most crops. Continue with normal farming practices.'
+                });
+            }
+
+            // Humidity insights
+            if (weatherData.humidity > 70) {
+                insights.push({
+                    type: 'warning',
+                    icon: '💧',
+                    title: 'High Humidity Alert',
+                    description: 'High humidity increases disease risk. Ensure proper ventilation and avoid overwatering.'
+                });
+            } else if (weatherData.humidity < 40) {
+                insights.push({
+                    type: 'warning',
+                    icon: '🏜️',
+                    title: 'Low Humidity Warning',
+                    description: 'Low humidity may cause water stress. Increase irrigation frequency.'
+                });
+            }
+
+            // Rainfall insights
+            if (weatherData.rainfall > 15) {
+                insights.push({
+                    type: 'warning',
+                    icon: '🌧️',
+                    title: 'Heavy Rainfall Expected',
+                    description: 'Heavy rainfall predicted. Check drainage systems and protect crops from waterlogging.'
+                });
+            } else if (weatherData.rainfall < 5) {
+                insights.push({
+                    type: 'warning',
+                    icon: '☀️',
+                    title: 'Low Rainfall Period',
+                    description: 'Minimal rainfall expected. Plan irrigation schedule accordingly.'
+                });
+            }
+
+            // General farming insights
+            insights.push({
+                type: 'info',
+                icon: '🌱',
+                title: 'Crop Growth Conditions',
+                description: 'Current conditions are suitable for most crops. Monitor soil moisture and adjust irrigation as needed.'
+            });
+
+            insights.push({
+                type: 'info',
+                icon: '🛡️',
+                title: 'Disease Prevention',
+                description: 'Maintain proper spacing between plants and avoid overhead watering to prevent fungal diseases.'
+            });
+
+            const insightHTML = insights.map(insight => `
+                <div class="insight-card ${insight.type}">
+                    <div class="insight-icon">${insight.icon}</div>
+                    <div class="insight-title">${insight.title}</div>
+                    <div class="insight-description">${insight.description}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('insightCards').innerHTML = insightHTML;
+        }
+
+        function downloadClimateReport() {
+            const state = document.getElementById('state').value;
+            const city = document.getElementById('city').value;
+            
+            if (!state || !city) {
+                alert('Please select location first');
+                return;
+            }
+
+            const reportContent = `
+                CLIMATE INSIGHTS REPORT
+                ======================
+                
+                Location: ${city.charAt(0).toUpperCase() + city.slice(1)}, ${state.charAt(0).toUpperCase() + state.slice(1)}
+                Date: ${new Date().toLocaleDateString()}
+                
+                CURRENT WEATHER CONDITIONS
+                =========================
+                Temperature: ${document.querySelector('.weather-value')?.textContent || 'N/A'}
+                Humidity: ${document.querySelectorAll('.weather-value')[1]?.textContent || 'N/A'}
+                Rainfall: ${document.querySelectorAll('.weather-value')[2]?.textContent || 'N/A'}
+                Wind Speed: ${document.querySelectorAll('.weather-value')[3]?.textContent || 'N/A'}
+                
+                7-DAY FORECAST
+                ==============
+                ${Array.from(document.querySelectorAll('.forecast-item')).map(item => {
+                    const day = item.querySelector('.forecast-day')?.textContent || '';
+                    const temp = item.querySelector('.forecast-temp')?.textContent || '';
+                    const condition = item.querySelector('.forecast-condition')?.textContent || '';
+                    return `${day}: ${temp} - ${condition}`;
+                }).join('\n')}
+                
+                FARMING RECOMMENDATIONS
+                =======================
+                Based on current weather conditions and forecast, here are the key recommendations for your farming activities.
+                
+                Generated by SatYield AI
+                For more detailed analysis, visit our platform.
+            `;
+
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Climate_Report_${city}_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function goToGuidance() {
+            window.location.href = 'guidance.html';
+        }
+
+        function viewFinalDashboard() {
+            window.location.href = 'final-dashboard.html';
+        }
+
+        function viewSoilAnalysis() {
+            window.location.href = 'soil-analysis.html';
+        }
+    </script>
+    <script src="enhanced-translate.js"></script>
+</body>
+</html>
+  

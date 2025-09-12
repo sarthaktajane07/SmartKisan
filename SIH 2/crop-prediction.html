@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendations - SmartKisan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('farming-field-bg.jpg') center/cover no-repeat fixed;
+            background-color: #2E4635;
+            color: #333333;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(46, 70, 53, 0.7);
+            z-index: -1;
+        }
+
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 3.5rem;
+            color: #FFFFFF;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 
+                0 1px 0 #FFA500,
+                0 2px 0 #FF8C00,
+                0 3px 5px rgba(0,0,0,0.3),
+                0 0 10px rgba(255,215,0,0.5);
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .page-title p {
+            color: #FFFFFF;
+            font-size: 1.3rem;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+            font-weight: 500;
+        }
+
+        .selection-summary {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 3rem;
+            color: #2E4635;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .selection-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FBC02D, #f7931e, #4CAF50);
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2E4635;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 1.8rem;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            border-radius: 18px;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .summary-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(76, 175, 80, 0.4);
+        }
+
+        .summary-label {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-weight: bold;
+            color: #FFFFFF;
+            font-size: 1.3rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .ai-analysis {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            color: #2E4635;
+            border-radius: 25px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ai-analysis::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4CAF50, #FBC02D, #f7931e);
+        }
+
+        .ai-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: #2E4635;
+        }
+
+        .ai-description {
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .ai-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .ai-feature {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .ai-feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+        }
+
+        .ai-feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-feature-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-feature-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .crop-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            color: #2E4635;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .crop-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #FBC02D);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .crop-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .crop-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .crop-card.selected {
+            border: 4px solid #FBC02D;
+            background: linear-gradient(135deg, rgba(251, 192, 45, 0.1), rgba(255, 255, 255, 0.95));
+            color: #2E4635;
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(251, 192, 45, 0.4);
+        }
+        
+        .crop-card.selected::before {
+            transform: scaleX(1);
+            background: linear-gradient(90deg, #FBC02D, #f7931e);
+            height: 5px;
+        }
+
+        .crop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .crop-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2E4635;
+        }
+
+        .crop-type {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: #FFFFFF;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .crop-image {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #4CAF50, #8BC34A, #FBC02D);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #2E4635;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .crop-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .crop-card:hover .crop-image::before {
+            left: 100%;
+        }
+
+        .crop-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .stat-item:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFFFFF;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .crop-description {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .crop-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .crop-features li {
+            padding: 0.4rem 0;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        .crop-features li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .select-crop-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .select-crop-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .select-crop-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            color: #1B3B2F;
+            box-shadow: 0 8px 25px rgba(251, 192, 45, 0.4);
+        }
+        
+        .select-crop-btn:hover::before {
+            left: 100%;
+        }
+
+        .selected-crop-summary {
+            background: rgba(46, 70, 53, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideInUp 0.5s ease;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .selected-crop-summary.show {
+            display: block;
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #F5F5F5;
+        }
+
+        .change-crop-btn {
+            background: #6c757d;
+            color: #2E4635;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .profit-chart {
+            background: #1B3B2F;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1rem;
+        }
+
+        .chart-bar {
+            background: linear-gradient(90deg, #FBC02D, #f7931e);
+            height: 20px;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .chart-value {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2E4635;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            color: #1B3B2F;
+            box-shadow: 0 8px 25px rgba(251, 192, 45, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #868e96);
+            color: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(45deg, #5a6268, #6c757d);
+            box-shadow: 0 8px 25px rgba(90, 98, 104, 0.4);
+        }
+
+        .crop-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .compare-btn, .sell-btn {
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .compare-btn {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+        }
+
+        .compare-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        .sell-btn {
+            background: linear-gradient(45deg, #FF9800, #FFB74D);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+        }
+
+        .sell-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+        }
+
+        .interactive-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            gap: 2rem;
+        }
+
+        .tool-btn {
+            background: linear-gradient(45deg, #9C27B0, #E91E63);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .tool-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
+        }
+
+        .tool-icon {
+            font-size: 1.3rem;
+        }
+
+        .comparison-display {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(33, 150, 243, 0.3);
+            min-width: 300px;
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-header h3 {
+            color: #2196F3;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .clear-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .comparison-crops {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-crop {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(33, 150, 243, 0.1);
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .remove-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .compare-now-btn {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .comparison-modal, .recommendation-modal {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header h2 {
+            color: #2E4635;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .close-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .comparison-row {
+            display: contents;
+        }
+
+        .comparison-cell {
+            background: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .comparison-row.header .comparison-cell {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: white;
+            font-weight: bold;
+        }
+
+        .comparison-cell.winner {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: white;
+            font-weight: bold;
+        }
+
+        .recommendation {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 2px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .recommendation h3 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .recommended-crop {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 15px;
+        }
+
+        .crop-icon-large {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .recommendation-score {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        .recommendation-reasons ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendation-reasons li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .recommendation-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .select-recommended-btn {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .maybe-later-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sale-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .sale-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .sale-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .got-it-btn {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .interactive-tools {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .comparison-display {
+                min-width: auto;
+            }
+
+            .comparison-modal, .recommendation-modal {
+                margin: 1rem;
+                max-width: calc(100% - 2rem);
+            }
+
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+
+            .recommendation-actions {
+                flex-direction: column;
+            }
+
+            .crops-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-features {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-title">
+            <h1>Here's what we recommend! 🌾</h1>
+            <p>Our AI analyzed your farm and found these perfect crops for you. Pick the one that excites you most!</p>
+        </div>
+
+        <div class="interactive-tools">
+            <button onclick="getSmartRecommendation()" class="tool-btn recommendation-btn">
+                <span class="tool-icon">🎯</span>
+                <span class="tool-text">Get AI Recommendation</span>
+            </button>
+            <div id="comparisonDisplay" class="comparison-display" style="display: none;"></div>
+        </div>
+
+        <div class="selection-summary">
+            <div class="summary-title">Your Selection</div>
+            <div class="summary-grid" id="selectionSummary">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="ai-analysis">
+            <div class="ai-title">🎯 Our AI did the homework for you!</div>
+            <div class="ai-description">
+                We checked your weather, soil, market prices, and even talked to other farmers in your area. Here's what we found:
+            </div>
+            <div class="ai-features">
+                <div class="ai-feature">
+                    <div class="ai-feature-icon">🌍</div>
+                    <div class="ai-feature-title">Location Analysis</div>
+                    <div class="ai-feature-desc">Soil type, climate zone, and regional factors</div>
+                </div>
+                <div class="ai-feature">
+                    <div class="ai-feature-icon">📊</div>
+                    <div class="ai-feature-title">Market Trends</div>
+                    <div class="ai-feature-desc">Current prices and demand forecasts</div>
+                </div>
+                <div class="ai-feature">
+                    <div class="ai-feature-icon">🌦️</div>
+                    <div class="ai-feature-title">Weather Forecast</div>
+                    <div class="ai-feature-desc">Seasonal weather patterns and risks</div>
+                </div>
+                <div class="ai-feature">
+                    <div class="ai-feature-icon">💰</div>
+                    <div class="ai-feature-title">Profitability</div>
+                    <div class="ai-feature-desc">ROI calculations and cost analysis</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="crops-grid" id="cropsGrid">
+            <!-- Crops will be populated by JavaScript -->
+        </div>
+
+        <div class="selected-crop-summary" id="selectedCropSummary">
+            <div class="summary-header">
+                <div class="summary-title">Selected Crop Analysis</div>
+                <button class="change-crop-btn" onclick="changeCrop()">Change Crop</button>
+            </div>
+            <div id="cropAnalysisContent">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="proceedToGuidance()" id="proceedBtn" style="display: none;">
+                Get Step-by-Step Guidance
+            </button>
+            <button class="btn btn-primary" onclick="viewFinalDashboard()" id="finalDashboardBtn" style="display: none;">
+                View Complete Plan
+            </button>
+            <button class="btn btn-secondary" onclick="viewSoilAnalysis()">
+                Analyze Soil Image
+            </button>
+            <button class="btn btn-secondary" onclick="viewClimateInsights()">
+                Check Climate Insights
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Sample crop data based on different cities and seasons
+        const cropData = {
+            'mumbai': {
+                'kharif': [
+                    {
+                        name: 'Rice',
+                        type: 'Cereal',
+                        icon: '🌾',
+                        yield: '3.2 tons/acre',
+                        profitability: '85%',
+                        description: 'High-yielding rice variety suitable for Mumbai\'s coastal climate with good water availability.',
+                        features: ['High yield potential', 'Good market demand', 'Suitable for coastal areas', 'Resistant to salinity'],
+                        profit: 45000,
+                        maxProfit: 60000
+                    },
+                    {
+                        name: 'Cotton',
+                        type: 'Cash Crop',
+                        icon: '🌿',
+                        yield: '2.8 bales/acre',
+                        profitability: '78%',
+                        description: 'Premium cotton variety with excellent fiber quality for textile industry.',
+                        features: ['High fiber quality', 'Good export potential', 'Drought resistant', 'High market value'],
+                        profit: 52000,
+                        maxProfit: 70000
+                    },
+                    {
+                        name: 'Sugarcane',
+                        type: 'Cash Crop',
+                        icon: '🎋',
+                        yield: '65 tons/acre',
+                        profitability: '92%',
+                        description: 'High-sugar content sugarcane perfect for Mumbai\'s tropical climate.',
+                        features: ['High sugar content', 'Long growing season', 'Good processing facilities', 'Stable market'],
+                        profit: 68000,
+                        maxProfit: 80000
+                    }
+                ],
+                'rabi': [
+                    {
+                        name: 'Wheat',
+                        type: 'Cereal',
+                        icon: '🌾',
+                        yield: '2.5 tons/acre',
+                        profitability: '72%',
+                        description: 'High-quality wheat variety suitable for Mumbai\'s winter season.',
+                        features: ['Good grain quality', 'Disease resistant', 'High protein content', 'Stable yield'],
+                        profit: 32000,
+                        maxProfit: 45000
+                    },
+                    {
+                        name: 'Chickpea',
+                        type: 'Pulse',
+                        icon: '🫘',
+                        yield: '1.8 tons/acre',
+                        profitability: '88%',
+                        description: 'Protein-rich chickpea variety with excellent market demand.',
+                        features: ['High protein content', 'Good market price', 'Nitrogen fixing', 'Low water requirement'],
+                        profit: 38000,
+                        maxProfit: 50000
+                    }
+                ]
+            },
+            'nagpur': {
+                'kharif': [
+                    {
+                        name: 'Soybean',
+                        type: 'Oilseed',
+                        icon: '🫘',
+                        yield: '2.2 tons/acre',
+                        profitability: '95%',
+                        description: 'High-oil content soybean variety perfect for Nagpur\'s climate and soil.',
+                        features: ['High oil content', 'Excellent market demand', 'Drought tolerant', 'Good for crop rotation'],
+                        profit: 48000,
+                        maxProfit: 60000
+                    },
+                    {
+                        name: 'Cotton',
+                        type: 'Cash Crop',
+                        icon: '🌿',
+                        yield: '3.1 bales/acre',
+                        profitability: '82%',
+                        description: 'Premium cotton variety with excellent fiber quality for textile industry.',
+                        features: ['High fiber quality', 'Good export potential', 'Drought resistant', 'High market value'],
+                        profit: 55000,
+                        maxProfit: 75000
+                    },
+                    {
+                        name: 'Maize',
+                        type: 'Cereal',
+                        icon: '🌽',
+                        yield: '4.5 tons/acre',
+                        profitability: '76%',
+                        description: 'High-yielding maize variety suitable for Nagpur\'s climate conditions.',
+                        features: ['High yield potential', 'Good for animal feed', 'Short growing season', 'Market stability'],
+                        profit: 42000,
+                        maxProfit: 55000
+                    }
+                ],
+                'rabi': [
+                    {
+                        name: 'Wheat',
+                        type: 'Cereal',
+                        icon: '🌾',
+                        yield: '2.8 tons/acre',
+                        profitability: '75%',
+                        description: 'High-quality wheat variety suitable for Nagpur\'s winter season.',
+                        features: ['Good grain quality', 'Disease resistant', 'High protein content', 'Stable yield'],
+                        profit: 35000,
+                        maxProfit: 48000
+                    },
+                    {
+                        name: 'Chickpea',
+                        type: 'Pulse',
+                        icon: '🫘',
+                        yield: '2.0 tons/acre',
+                        profitability: '90%',
+                        description: 'Protein-rich chickpea variety with excellent market demand.',
+                        features: ['High protein content', 'Good market price', 'Nitrogen fixing', 'Low water requirement'],
+                        profit: 42000,
+                        maxProfit: 55000
+                    }
+                ]
+            }
+        };
+
+        // Provide generic fallbacks when a city/season combo is missing
+        cropData.default = {
+            'kharif': [
+                { name: 'Maize', type: 'Cereal', icon: '🌽', yield: '4.0 tons/acre', profitability: '78%', description: 'Reliable short-duration maize suitable for monsoon sowing across regions.', features: ['Short duration', 'Stable market', 'Good fodder value', 'Broad adaptation'], profit: 42000, maxProfit: 55000 },
+                { name: 'Soybean', type: 'Oilseed', icon: '🫘', yield: '2.0 tons/acre', profitability: '84%', description: 'Popular kharif oilseed with strong demand and rotation benefits.', features: ['High oil content', 'Rotational benefits', 'Drought tolerant', 'Good demand'], profit: 47000, maxProfit: 60000 }
+            ],
+            'rabi': [
+                { name: 'Wheat', type: 'Cereal', icon: '🌾', yield: '2.6 tons/acre', profitability: '74%', description: 'Widely grown winter cereal with robust MSP support.', features: ['MSP support', 'Stable demand', 'Good grain quality', 'Mechanization friendly'], profit: 34000, maxProfit: 47000 },
+                { name: 'Chickpea', type: 'Pulse', icon: '🫘', yield: '1.9 tons/acre', profitability: '86%', description: 'Protein-rich pulse with low water requirement.', features: ['Low water need', 'Nitrogen fixing', 'Good price realization', 'Fits in rotations'], profit: 39000, maxProfit: 52000 }
+            ]
+        };
+
+        let selectedCrop = null;
+        let farmerSelection = {};
+
+        // Load farmer selection data
+        window.onload = function() {
+            const selectionData = localStorage.getItem('farmerSelection');
+            if (selectionData) {
+                farmerSelection = JSON.parse(selectionData);
+                displaySelectionSummary();
+                displayCrops();
+            } else {
+                alert('Oops! Looks like we lost your farm details. Let\'s go back and set them up again!');
+                window.location.href = 'city-selection.html';
+            }
+        };
+
+        function displaySelectionSummary() {
+            const summaryHTML = `
+                <div class="summary-item">
+                    <div class="summary-label">City</div>
+                    <div class="summary-value">${farmerSelection.city.charAt(0).toUpperCase() + farmerSelection.city.slice(1)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Season</div>
+                    <div class="summary-value">${farmerSelection.season.charAt(0).toUpperCase() + farmerSelection.season.slice(1)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Area</div>
+                    <div class="summary-value">${farmerSelection.area} ${farmerSelection.unit}</div>
+                </div>
+            `;
+            document.getElementById('selectionSummary').innerHTML = summaryHTML;
+        }
+
+        function normalizeSeason(s) {
+            if (!s) return 'kharif';
+            const key = s.toLowerCase();
+            if (['kharif', 'monsoon', 'rainy', 'summer'].includes(key)) return 'kharif';
+            if (['rabi', 'winter'].includes(key)) return 'rabi';
+            return key;
+        }
+
+        function displayCrops() {
+            const cityKey = (farmerSelection.city || '').toLowerCase();
+            const seasonKey = normalizeSeason(farmerSelection.season);
+
+            // Try exact city-season, then Mumbai/Nagpur season, then default
+            let crops = (cropData[cityKey]?.[seasonKey])
+                || (cropData['mumbai']?.[seasonKey])
+                || (cropData['nagpur']?.[seasonKey])
+                || (cropData.default?.[seasonKey])
+                || [];
+            const cropsGrid = document.getElementById('cropsGrid');
+            
+            if (crops.length === 0) {
+                cropsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #BDBDBD;">No crop recommendations available for this combination. Please try a different city or season.</div>';
+                return;
+            }
+
+            cropsGrid.innerHTML = crops.map(crop => `
+                <div class="crop-card" data-crop="${encodeURIComponent(JSON.stringify(crop))}">
+                    <div class="crop-header">
+                        <div class="crop-name">${crop.name}</div>
+                        <div class="crop-type">${crop.type}</div>
+                    </div>
+                    <div class="crop-image">${crop.icon}</div>
+                    <div class="crop-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${crop.yield}</div>
+                            <div class="stat-label">Expected Yield</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${crop.profitability}</div>
+                            <div class="stat-label">Profitability</div>
+                        </div>
+                    </div>
+                    <div class="crop-description">${crop.description}</div>
+                    <ul class="crop-features">
+                        ${crop.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                    <div class="crop-actions">
+                        <button class="select-crop-btn">🌱 I'll grow this one!</button>
+                        <button class="compare-btn" onclick="addToComparison('${crop.name}')">📊 Compare</button>
+                        <button class="sell-btn" onclick="redirectToSelling('${crop.name}')">💰 Sell Online</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Attach button handlers (avoid inline handlers for reliability)
+            attachSelectHandlers();
+        }
+
+        function selectCrop(cropName) {
+            // Remove previous selection
+            document.querySelectorAll('.crop-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Find and select the clicked crop
+            const cropCard = Array.from(document.querySelectorAll('.crop-card')).find(card => {
+                const cropData = JSON.parse(decodeURIComponent(card.dataset.crop));
+                return cropData.name === cropName;
+            });
+
+            if (cropCard) {
+                cropCard.classList.add('selected');
+                selectedCrop = JSON.parse(decodeURIComponent(cropCard.dataset.crop));
+                displaySelectedCropSummary();
+                document.getElementById('proceedBtn').style.display = 'inline-block';
+                document.getElementById('finalDashboardBtn').style.display = 'inline-block';
+            }
+        }
+
+        function displaySelectedCropSummary() {
+            if (!selectedCrop) return;
+
+            const profitPercentage = (selectedCrop.profit / selectedCrop.maxProfit) * 100;
+            
+            document.getElementById('cropAnalysisContent').innerHTML = `
+                <div class="profit-chart">
+                    <div class="chart-title">Profitability Analysis</div>
+                    <div class="chart-bar" style="width: ${profitPercentage}%">
+                        <div class="chart-value">₹${selectedCrop.profit.toLocaleString()}</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: #BDBDBD; font-size: 0.9rem;">
+                        <span>₹0</span>
+                        <span>Max: ₹${selectedCrop.maxProfit.toLocaleString()}</span>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="stat-item">
+                        <div class="stat-value">${selectedCrop.yield}</div>
+                        <div class="stat-label">Expected Yield</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${selectedCrop.profitability}</div>
+                        <div class="stat-label">Profitability Score</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">₹${selectedCrop.profit.toLocaleString()}</div>
+                        <div class="stat-label">Estimated Profit</div>
+                    </div>
+                </div>
+                <div style="background: #1B3B2F; padding: 1.5rem; border-radius: 10px;">
+                    <h4 style="margin-bottom: 1rem; color: #F5F5F5;">Why This Crop?</h4>
+                    <ul class="crop-features">
+                        ${selectedCrop.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('selectedCropSummary').classList.add('show');
+        }
+
+        // Select a crop and immediately go to guidance
+        function attachSelectHandlers() {
+            document.querySelectorAll('.select-crop-btn').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    const card = this.closest('.crop-card');
+                    if (!card) return;
+                    try {
+                        selectedCrop = JSON.parse(decodeURIComponent(card.dataset.crop));
+                    } catch (_) {
+                        selectedCrop = null;
+                    }
+                    if (!selectedCrop) return;
+                    // Visual select
+                    document.querySelectorAll('.crop-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    // Persist and go
+                    localStorage.setItem('selectedCrop', JSON.stringify(selectedCrop));
+                    window.location.href = 'guidance.html';
+                });
+            });
+        }
+
+        function changeCrop() {
+            document.getElementById('selectedCropSummary').classList.remove('show');
+            document.getElementById('proceedBtn').style.display = 'none';
+            selectedCrop = null;
+        }
+
+        function proceedToGuidance() {
+            if (selectedCrop) {
+                // Store selected crop data
+                localStorage.setItem('selectedCrop', JSON.stringify(selectedCrop));
+                window.location.href = 'guidance.html';
+            }
+        }
+
+        function viewClimateInsights() {
+            window.location.href = 'climate-insights.html';
+        }
+
+        function viewFinalDashboard() {
+            if (selectedCrop) {
+                // Store selected crop data
+                localStorage.setItem('selectedCrop', JSON.stringify(selectedCrop));
+                window.location.href = 'final-dashboard.html';
+            }
+        }
+
+        function viewSoilAnalysis() {
+            window.location.href = 'soil-analysis.html';
+        }
+
+        // Comparison Tool
+        let comparisonCrops = [];
+
+        function addToComparison(cropName) {
+            const cityKey = (farmerSelection.city || '').toLowerCase();
+            const seasonKey = normalizeSeason(farmerSelection.season);
+            let crops = (cropData[cityKey]?.[seasonKey])
+                || (cropData['mumbai']?.[seasonKey])
+                || (cropData['nagpur']?.[seasonKey])
+                || (cropData.default?.[seasonKey])
+                || [];
+            
+            const crop = crops.find(c => c.name === cropName);
+            if (crop && comparisonCrops.length < 2 && !comparisonCrops.find(c => c.name === cropName)) {
+                comparisonCrops.push(crop);
+                updateComparisonDisplay();
+                
+                if (comparisonCrops.length === 2) {
+                    showComparisonModal();
+                }
+            } else if (comparisonCrops.length >= 2) {
+                alert('You can only compare 2 crops at a time. Clear comparison to add new crops.');
+            }
+        }
+
+        function updateComparisonDisplay() {
+            const comparisonDiv = document.getElementById('comparisonDisplay');
+            if (comparisonCrops.length === 0) {
+                comparisonDiv.style.display = 'none';
+                return;
+            }
+            
+            comparisonDiv.style.display = 'block';
+            comparisonDiv.innerHTML = `
+                <div class="comparison-header">
+                    <h3>📊 Comparison (${comparisonCrops.length}/2)</h3>
+                    <button onclick="clearComparison()" class="clear-btn">Clear</button>
+                </div>
+                <div class="comparison-crops">
+                    ${comparisonCrops.map(crop => `
+                        <div class="comparison-crop">
+                            <span>${crop.icon} ${crop.name}</span>
+                            <button onclick="removeFromComparison('${crop.name}')" class="remove-btn">×</button>
+                        </div>
+                    `).join('')}
+                </div>
+                ${comparisonCrops.length === 2 ? '<button onclick="showComparisonModal()" class="compare-now-btn">Compare Now</button>' : ''}
+            `;
+        }
+
+        function removeFromComparison(cropName) {
+            comparisonCrops = comparisonCrops.filter(c => c.name !== cropName);
+            updateComparisonDisplay();
+        }
+
+        function clearComparison() {
+            comparisonCrops = [];
+            updateComparisonDisplay();
+        }
+
+        function showComparisonModal() {
+            if (comparisonCrops.length !== 2) return;
+            
+            const [crop1, crop2] = comparisonCrops;
+            const modalHTML = `
+                <div class="modal-overlay" onclick="closeComparisonModal()">
+                    <div class="comparison-modal" onclick="event.stopPropagation()">
+                        <div class="modal-header">
+                            <h2>📊 Crop Comparison</h2>
+                            <button onclick="closeComparisonModal()" class="close-btn">×</button>
+                        </div>
+                        <div class="comparison-content">
+                            <div class="comparison-table">
+                                <div class="comparison-row header">
+                                    <div class="comparison-cell">Aspect</div>
+                                    <div class="comparison-cell">${crop1.icon} ${crop1.name}</div>
+                                    <div class="comparison-cell">${crop2.icon} ${crop2.name}</div>
+                                </div>
+                                <div class="comparison-row">
+                                    <div class="comparison-cell">💰 Profit</div>
+                                    <div class="comparison-cell ${crop1.profit > crop2.profit ? 'winner' : ''}">₹${crop1.profit.toLocaleString()}</div>
+                                    <div class="comparison-cell ${crop2.profit > crop1.profit ? 'winner' : ''}">₹${crop2.profit.toLocaleString()}</div>
+                                </div>
+                                <div class="comparison-row">
+                                    <div class="comparison-cell">🌾 Yield</div>
+                                    <div class="comparison-cell">${crop1.yield}</div>
+                                    <div class="comparison-cell">${crop2.yield}</div>
+                                </div>
+                                <div class="comparison-row">
+                                    <div class="comparison-cell">📈 Profitability</div>
+                                    <div class="comparison-cell">${crop1.profitability}</div>
+                                    <div class="comparison-cell">${crop2.profitability}</div>
+                                </div>
+                                <div class="comparison-row">
+                                    <div class="comparison-cell">💧 Water Need</div>
+                                    <div class="comparison-cell">${getWaterNeed(crop1.name)}</div>
+                                    <div class="comparison-cell">${getWaterNeed(crop2.name)}</div>
+                                </div>
+                                <div class="comparison-row">
+                                    <div class="comparison-cell">⚠️ Risk Level</div>
+                                    <div class="comparison-cell">${getRiskLevel(crop1.name)}</div>
+                                    <div class="comparison-cell">${getRiskLevel(crop2.name)}</div>
+                                </div>
+                            </div>
+                            <div class="recommendation">
+                                <h3>🎯 Our Recommendation</h3>
+                                <p>${getComparisonRecommendation(crop1, crop2)}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeComparisonModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) modal.remove();
+        }
+
+        function getWaterNeed(cropName) {
+            const waterNeeds = {
+                'Rice': 'High (1500mm)',
+                'Wheat': 'Medium (450mm)',
+                'Cotton': 'High (700mm)',
+                'Sugarcane': 'Very High (2000mm)',
+                'Soybean': 'Medium (500mm)',
+                'Maize': 'Medium (600mm)',
+                'Bajra': 'Low (350mm)',
+                'Jowar': 'Low (400mm)',
+                'Groundnut': 'Medium (500mm)',
+                'Sunflower': 'Medium (400mm)',
+                'Chickpea': 'Low (300mm)',
+                'Pigeon Pea': 'Medium (650mm)'
+            };
+            return waterNeeds[cropName] || 'Medium';
+        }
+
+        function getRiskLevel(cropName) {
+            const riskLevels = {
+                'Rice': 'Medium',
+                'Wheat': 'Low',
+                'Cotton': 'High',
+                'Sugarcane': 'Medium',
+                'Soybean': 'Medium',
+                'Maize': 'Low',
+                'Bajra': 'Low',
+                'Jowar': 'Low',
+                'Groundnut': 'Medium',
+                'Sunflower': 'Low',
+                'Chickpea': 'Low',
+                'Pigeon Pea': 'Medium'
+            };
+            return riskLevels[cropName] || 'Medium';
+        }
+
+        function getComparisonRecommendation(crop1, crop2) {
+            const winner = crop1.profit > crop2.profit ? crop1 : crop2;
+            return `Based on your farm conditions, we recommend ${winner.name} for higher profitability (₹${winner.profit.toLocaleString()}). Consider factors like water availability and market demand in your final decision.`;
+        }
+
+        // Recommendation Engine
+        function getSmartRecommendation() {
+            const cityKey = (farmerSelection.city || '').toLowerCase();
+            const seasonKey = normalizeSeason(farmerSelection.season);
+            let crops = (cropData[cityKey]?.[seasonKey])
+                || (cropData['mumbai']?.[seasonKey])
+                || (cropData['nagpur']?.[seasonKey])
+                || (cropData.default?.[seasonKey])
+                || [];
+            
+            if (crops.length === 0) return;
+            
+            // Score crops based on multiple factors
+            const scoredCrops = crops.map(crop => {
+                let score = 0;
+                
+                // Profit weight (40%)
+                score += (crop.profit / 100000) * 40;
+                
+                // Area suitability (30%)
+                const area = parseFloat(farmerSelection.area) || 1;
+                if (area <= 2) score += 30; // Small farms benefit from intensive crops
+                else if (area <= 5) score += 25;
+                else score += 20;
+                
+                // Water availability (20%)
+                const waterNeed = getWaterNeed(crop.name);
+                if (waterNeed.includes('Low')) score += 20;
+                else if (waterNeed.includes('Medium')) score += 15;
+                else score += 10;
+                
+                // Risk factor (10%)
+                const risk = getRiskLevel(crop.name);
+                if (risk === 'Low') score += 10;
+                else if (risk === 'Medium') score += 7;
+                else score += 5;
+                
+                return { ...crop, score };
+            });
+            
+            const recommended = scoredCrops.sort((a, b) => b.score - a.score)[0];
+            
+            const modalHTML = `
+                <div class="modal-overlay" onclick="closeRecommendationModal()">
+                    <div class="recommendation-modal" onclick="event.stopPropagation()">
+                        <div class="modal-header">
+                            <h2>🎯 AI Recommendation</h2>
+                            <button onclick="closeRecommendationModal()" class="close-btn">×</button>
+                        </div>
+                        <div class="recommendation-content">
+                            <div class="recommended-crop">
+                                <div class="crop-icon-large">${recommended.icon}</div>
+                                <h3>${recommended.name}</h3>
+                                <div class="recommendation-score">Match Score: ${Math.round(recommended.score)}%</div>
+                            </div>
+                            <div class="recommendation-reasons">
+                                <h4>Why we recommend this:</h4>
+                                <ul>
+                                    <li>💰 High profit potential: ₹${recommended.profit.toLocaleString()}</li>
+                                    <li>🌾 Suitable for your ${farmerSelection.area} ${farmerSelection.unit} farm</li>
+                                    <li>💧 Water requirement: ${getWaterNeed(recommended.name)}</li>
+                                    <li>⚠️ Risk level: ${getRiskLevel(recommended.name)}</li>
+                                    <li>📍 Perfect for ${farmerSelection.city} in ${farmerSelection.season} season</li>
+                                </ul>
+                            </div>
+                            <div class="recommendation-actions">
+                                <button onclick="selectRecommendedCrop('${recommended.name}')" class="select-recommended-btn">🌱 Select This Crop</button>
+                                <button onclick="closeRecommendationModal()" class="maybe-later-btn">Maybe Later</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeRecommendationModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) modal.remove();
+        }
+
+        function selectRecommendedCrop(cropName) {
+            closeRecommendationModal();
+            selectCrop(cropName);
+        }
+
+        // Direct Sale Integration
+        function redirectToSelling(cropName) {
+            const enamUrl = `https://enam.gov.in/web/`;
+            const confirmSale = confirm(`Ready to sell ${cropName}? We'll redirect you to eNAM (National Agriculture Market) where you can:
+
+• Get best prices for your produce
+• Connect with buyers across India
+• Access transparent pricing
+• Ensure timely payments
+
+Proceed to eNAM?`);
+            
+            if (confirmSale) {
+                // Store crop info for potential future use
+                localStorage.setItem('cropForSale', JSON.stringify({
+                    name: cropName,
+                    timestamp: new Date().toISOString(),
+                    farmerDetails: farmerSelection
+                }));
+                
+                // Open eNAM in new tab
+                window.open(enamUrl, '_blank');
+                
+                // Show success message
+                showSaleRedirectMessage(cropName);
+            }
+        }
+
+        function showSaleRedirectMessage(cropName) {
+            const messageHTML = `
+                <div class="sale-message">
+                    <div class="sale-content">
+                        <div class="sale-icon">🎉</div>
+                        <h3>Redirected to eNAM!</h3>
+                        <p>You're all set to sell ${cropName} on India's National Agriculture Market.</p>
+                        <button onclick="closeSaleMessage()" class="got-it-btn">Got it!</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', messageHTML);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                closeSaleMessage();
+            }, 5000);
+        }
+
+        function closeSaleMessage() {
+            const message = document.querySelector('.sale-message');
+            if (message) message.remove();
+        }
+    </script>
+    <script src="enhanced-translate.js"></script>
+</body>
+</html>

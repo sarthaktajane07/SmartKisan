@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Dashboard - SatYield</title>
+    <link rel="stylesheet" href="universal-translate.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #F5F5DC;
+            color: #333333;
+        }
+
+        .header {
+            background: #1B3B2F;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            color: #F5F5F5;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: #2E4635;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: #1B5E20;
+            margin-bottom: 1rem;
+        }
+
+        .page-title p {
+            color: #333333;
+            font-size: 1.1rem;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .summary-card {
+            background: #2E4635;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .summary-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FBC02D;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-description {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .crop-details {
+            background: #2E4635;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .crop-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .crop-icon {
+            font-size: 4rem;
+            margin-right: 1.5rem;
+        }
+
+        .crop-info h2 {
+            font-size: 2rem;
+            color: #F5F5F5;
+            margin-bottom: 0.5rem;
+        }
+
+        .crop-type {
+            background: #e9ecef;
+            color: #BDBDBD;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .crop-description {
+            color: #BDBDBD;
+            line-height: 1.6;
+        }
+
+        .crop-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            background: #1B3B2F;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FBC02D;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-label {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .profit-chart {
+            background: #2E4635;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-container {
+            background: #1B3B2F;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-bar {
+            background: linear-gradient(90deg, #FBC02D, #f7931e);
+            height: 30px;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-value {
+            color: #2E4635;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .profit-breakdown {
+            background: #1B3B2F;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .breakdown-title {
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            color: #F5F5F5;
+        }
+
+        .breakdown-label {
+            color: #BDBDBD;
+        }
+
+        .breakdown-value {
+            font-weight: 600;
+        }
+
+        .guidance-summary {
+            background: #2E4635;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .guidance-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .guidance-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .guidance-step {
+            background: #1B3B2F;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .reports-section {
+            background: #2E4635;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .reports-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .report-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .report-option {
+            background: #1B3B2F;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .report-option:hover {
+            background: #fff5f0;
+            border-color: #FBC02D;
+            transform: translateY(-2px);
+        }
+
+        .report-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-title {
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-description {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            color: #2E4635;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #2E4635;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: #2E4635;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .timeline {
+            background: #2E4635;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-date {
+            background: #FBC02D;
+            color: #2E4635;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 1rem;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            color: #F5F5F5;
+            margin-bottom: 0.2rem;
+        }
+
+        .timeline-description {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+
+        .timeline-status {
+            background: #28a745;
+            color: #2E4635;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .crop-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .guidance-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .report-options {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>SatYield</h1>
+        </div>
+        <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Your farming success plan! 🎯</h1>
+            <p>Everything you need to grow amazing crops. Download your personalized guide and start farming like a pro!</p>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="summary-icon">🌾</div>
+                <div class="summary-title">Selected Crop</div>
+                <div class="summary-value" id="selectedCropName">-</div>
+                <div class="summary-description">AI Recommended</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">📊</div>
+                <div class="summary-title">Expected Yield</div>
+                <div class="summary-value" id="expectedYield">-</div>
+                <div class="summary-description">Per Acre</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">💰</div>
+                <div class="summary-title">Estimated Profit</div>
+                <div class="summary-value" id="estimatedProfit">-</div>
+                <div class="summary-description">Total Projection</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">📈</div>
+                <div class="summary-title">Profitability</div>
+                <div class="summary-value" id="profitabilityScore">-</div>
+                <div class="summary-description">Success Rate</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="crop-details">
+                <div class="crop-header">
+                    <div class="crop-icon" id="cropIcon">🌾</div>
+                    <div class="crop-info">
+                        <h2 id="cropName">Crop Name</h2>
+                        <div class="crop-type" id="cropType">Crop Type</div>
+                        <div class="crop-description" id="cropDescription">Crop description will appear here</div>
+                    </div>
+                </div>
+                <div class="crop-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statYield">-</div>
+                        <div class="stat-label">Expected Yield</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statProfitability">-</div>
+                        <div class="stat-label">Profitability</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statProfit">-</div>
+                        <div class="stat-label">Estimated Profit</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statArea">-</div>
+                        <div class="stat-label">Farm Area</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profit-chart">
+                <div class="chart-title">💰 Profit Analysis</div>
+                <div class="chart-container">
+                    <div class="chart-bar" id="profitBar">
+                        <div class="chart-value" id="profitValue">₹0</div>
+                    </div>
+                    <div class="chart-labels">
+                        <span>₹0</span>
+                        <span>Max: ₹100,000</span>
+                    </div>
+                </div>
+                <div class="profit-breakdown">
+                    <div class="breakdown-title">Cost Breakdown</div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Seeds & Planting</span>
+                        <span class="breakdown-value" id="seedCost">₹5,000</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Fertilizers</span>
+                        <span class="breakdown-value" id="fertilizerCost">₹8,000</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Irrigation</span>
+                        <span class="breakdown-value" id="irrigationCost">₹3,000</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Labor</span>
+                        <span class="breakdown-value" id="laborCost">₹12,000</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Other Expenses</span>
+                        <span class="breakdown-value" id="otherCost">₹2,000</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Total Cost</span>
+                        <span class="breakdown-value" id="totalCost">₹30,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guidance-summary">
+            <div class="guidance-title">📋 Farming Steps Overview</div>
+            <div class="guidance-steps">
+                <div class="guidance-step">
+                    <div class="step-icon">🌱</div>
+                    <div class="step-title">Soil Preparation</div>
+                    <div class="step-description">Foundation work</div>
+                </div>
+                <div class="guidance-step">
+                    <div class="step-icon">🌰</div>
+                    <div class="step-title">Seed Selection</div>
+                    <div class="step-description">Quality seeds</div>
+                </div>
+                <div class="guidance-step">
+                    <div class="step-icon">🌾</div>
+                    <div class="step-title">Sowing</div>
+                    <div class="step-description">Planting process</div>
+                </div>
+                <div class="guidance-step">
+                    <div class="step-icon">💧</div>
+                    <div class="step-title">Irrigation</div>
+                    <div class="step-description">Water management</div>
+                </div>
+                <div class="guidance-step">
+                    <div class="step-icon">🌿</div>
+                    <div class="step-title">Fertilizers</div>
+                    <div class="step-description">Nutrient supply</div>
+                </div>
+                <div class="guidance-step">
+                    <div class="step-icon">🛡️</div>
+                    <div class="step-title">Pest Control</div>
+                    <div class="step-description">Crop protection</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-title">📅 Farming Timeline</div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 1-2</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Soil Preparation</div>
+                    <div class="timeline-description">Field preparation, soil testing, and organic matter application</div>
+                </div>
+                <div class="timeline-status">Ready</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 3</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Sowing</div>
+                    <div class="timeline-description">Seed treatment and sowing with proper spacing</div>
+                </div>
+                <div class="timeline-status">Pending</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 4-8</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Early Growth</div>
+                    <div class="timeline-description">Irrigation, weeding, and initial fertilizer application</div>
+                </div>
+                <div class="timeline-status">Pending</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 9-12</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Active Growth</div>
+                    <div class="timeline-description">Regular irrigation, pest monitoring, and nutrient management</div>
+                </div>
+                <div class="timeline-status">Pending</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 13-16</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Maturity</div>
+                    <div class="timeline-description">Final irrigation, pest control, and harvest preparation</div>
+                </div>
+                <div class="timeline-status">Pending</div>
+            </div>
+        </div>
+
+        <div class="reports-section">
+            <div class="reports-title">📄 Get Your Farming Guide</div>
+            <div class="report-options">
+                <div class="report-option" onclick="downloadReport('complete')">
+                    <div class="report-icon">📋</div>
+                    <div class="report-title">📋 Your Complete Guide</div>
+                    <div class="report-description">Everything you need to know, step by step</div>
+                </div>
+                <div class="report-option" onclick="downloadReport('financial')">
+                    <div class="report-icon">💰</div>
+                    <div class="report-title">💰 Money Matters</div>
+                    <div class="report-description">See how much you'll make and spend</div>
+                </div>
+                <div class="report-option" onclick="downloadReport('climate')">
+                    <div class="report-icon">🌤️</div>
+                    <div class="report-title">🌤️ Weather Report</div>
+                    <div class="report-description">What the sky is telling us</div>
+                </div>
+                <div class="report-option" onclick="downloadReport('excel')">
+                    <div class="report-icon">📊</div>
+                    <div class="report-title">📊 Data Sheet</div>
+                    <div class="report-description">All the numbers in one place</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="startFarming()">Start Farming Journey</button>
+            <button class="btn btn-success" onclick="downloadAllReports()">📥 Download Everything</button>
+            <button class="btn btn-secondary" onclick="goToDashboard()">🏠 Back to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedCrop = {};
+        let farmerSelection = {};
+
+        window.onload = function() {
+            // Load data from localStorage
+            const cropData = localStorage.getItem('selectedCrop');
+            const selectionData = localStorage.getItem('farmerSelection');
+
+            if (cropData) {
+                selectedCrop = JSON.parse(cropData);
+            }
+
+            if (selectionData) {
+                farmerSelection = JSON.parse(selectionData);
+            }
+
+            displayData();
+        };
+
+        function displayData() {
+            // Update crop information
+            if (selectedCrop.name) {
+                document.getElementById('selectedCropName').textContent = selectedCrop.name;
+                document.getElementById('cropName').textContent = selectedCrop.name;
+                document.getElementById('cropIcon').textContent = selectedCrop.icon;
+                document.getElementById('cropType').textContent = selectedCrop.type;
+                document.getElementById('cropDescription').textContent = selectedCrop.description;
+            }
+
+            // Update yield information
+            if (selectedCrop.yield) {
+                document.getElementById('expectedYield').textContent = selectedCrop.yield;
+                document.getElementById('statYield').textContent = selectedCrop.yield;
+            }
+
+            // Update profitability
+            if (selectedCrop.profitability) {
+                document.getElementById('profitabilityScore').textContent = selectedCrop.profitability;
+                document.getElementById('statProfitability').textContent = selectedCrop.profitability;
+            }
+
+            // Update profit information
+            if (selectedCrop.profit) {
+                const profit = selectedCrop.profit;
+                document.getElementById('estimatedProfit').textContent = `₹${profit.toLocaleString()}`;
+                document.getElementById('statProfit').textContent = `₹${profit.toLocaleString()}`;
+                document.getElementById('profitValue').textContent = `₹${profit.toLocaleString()}`;
+                
+                // Update profit bar
+                const maxProfit = selectedCrop.maxProfit || 100000;
+                const percentage = (profit / maxProfit) * 100;
+                document.getElementById('profitBar').style.width = `${Math.min(percentage, 100)}%`;
+            }
+
+            // Update area information
+            if (farmerSelection.area && farmerSelection.unit) {
+                document.getElementById('statArea').textContent = `${farmerSelection.area} ${farmerSelection.unit}`;
+            }
+        }
+
+        function downloadReport(type) {
+            let content = '';
+            let filename = '';
+
+            switch (type) {
+                case 'complete':
+                    content = generateCompleteReport();
+                    filename = `${selectedCrop.name}_Complete_Guide.txt`;
+                    break;
+                case 'financial':
+                    content = generateFinancialReport();
+                    filename = `${selectedCrop.name}_Financial_Report.txt`;
+                    break;
+                case 'climate':
+                    content = generateClimateReport();
+                    filename = `${selectedCrop.name}_Climate_Report.txt`;
+                    break;
+                case 'excel':
+                    content = generateExcelReport();
+                    filename = `${selectedCrop.name}_Data.csv`;
+                    break;
+            }
+
+            const blob = new Blob([content], { type: type === 'excel' ? 'text/csv' : 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function generateCompleteReport() {
+            return `
+                COMPLETE FARMING GUIDE
+                =====================
+                
+                Crop: ${selectedCrop.name}
+                Type: ${selectedCrop.type}
+                Expected Yield: ${selectedCrop.yield}
+                Profitability: ${selectedCrop.profitability}
+                Estimated Profit: ₹${selectedCrop.profit?.toLocaleString() || '0'}
+                
+                FARMING STEPS
+                ============
+                
+                1. SOIL PREPARATION
+                - Test soil pH and nutrient levels
+                - Remove weeds and debris
+                - Plow to 15-20 cm depth
+                - Add organic matter
+                
+                2. SEED SELECTION
+                - Choose certified seeds
+                - Check germination rate
+                - Treat with fungicides
+                
+                3. SOWING
+                - Sow at 2-3 cm depth
+                - Maintain proper spacing
+                - Use seed drill
+                
+                4. IRRIGATION
+                - Light irrigation after sowing
+                - Maintain 60-70% soil moisture
+                - Irrigate every 7-10 days
+                
+                5. FERTILIZERS
+                - Apply NPK fertilizers
+                - Use organic options
+                - Follow soil test recommendations
+                
+                6. PEST CONTROL
+                - Regular monitoring
+                - Use IPM methods
+                - Apply biological controls
+                
+                Generated by SatYield AI
+                Date: ${new Date().toLocaleDateString()}
+            `;
+        }
+
+        function generateFinancialReport() {
+            return `
+                FINANCIAL ANALYSIS REPORT
+                ========================
+                
+                Crop: ${selectedCrop.name}
+                Farm Area: ${farmerSelection.area} ${farmerSelection.unit}
+                Expected Yield: ${selectedCrop.yield}
+                
+                COST BREAKDOWN
+                ==============
+                Seeds & Planting: ₹5,000
+                Fertilizers: ₹8,000
+                Irrigation: ₹3,000
+                Labor: ₹12,000
+                Other Expenses: ₹2,000
+                Total Cost: ₹30,000
+                
+                REVENUE PROJECTION
+                ==================
+                Expected Yield: ${selectedCrop.yield}
+                Market Price: ₹25,000 per ton
+                Total Revenue: ₹80,000
+                
+                PROFIT ANALYSIS
+                ==============
+                Total Revenue: ₹80,000
+                Total Cost: ₹30,000
+                Net Profit: ₹50,000
+                Profit Margin: 62.5%
+                
+                Generated by SatYield AI
+                Date: ${new Date().toLocaleDateString()}
+            `;
+        }
+
+        function generateClimateReport() {
+            return `
+                CLIMATE INSIGHTS REPORT
+                ======================
+                
+                Location: ${farmerSelection.city?.charAt(0).toUpperCase() + farmerSelection.city?.slice(1) || 'Not specified'}
+                Season: ${farmerSelection.season?.charAt(0).toUpperCase() + farmerSelection.season?.slice(1) || 'Not specified'}
+                
+                WEATHER CONDITIONS
+                ==================
+                Temperature: 28°C (Optimal)
+                Humidity: 65% (Good)
+                Rainfall: 12mm (Adequate)
+                Wind Speed: 8 km/h (Normal)
+                
+                FARMING RECOMMENDATIONS
+                ======================
+                - Current conditions are suitable for ${selectedCrop.name}
+                - Maintain regular irrigation schedule
+                - Monitor for pest activity
+                - Apply fertilizers as per schedule
+                
+                Generated by SatYield AI
+                Date: ${new Date().toLocaleDateString()}
+            `;
+        }
+
+        function generateExcelReport() {
+            return `
+                Crop,Type,Yield,Profitability,Estimated Profit,Area,Season,City
+                ${selectedCrop.name},${selectedCrop.type},${selectedCrop.yield},${selectedCrop.profitability},₹${selectedCrop.profit?.toLocaleString() || '0'},${farmerSelection.area} ${farmerSelection.unit},${farmerSelection.season},${farmerSelection.city}
+            `;
+        }
+
+        function downloadAllReports() {
+            const reports = ['complete', 'financial', 'climate', 'excel'];
+            reports.forEach((report, index) => {
+                setTimeout(() => {
+                    downloadReport(report);
+                }, index * 500);
+            });
+        }
+
+        function startFarming() {
+            alert('Starting your farming journey! You can now begin with soil preparation. Check the guidance section for detailed steps.');
+            window.location.href = 'guidance.html';
+        }
+
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+    <script src="enhanced-translate.js"></script>
+</body>
+</html>

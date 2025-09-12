@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farming Guidance - SatYield</title>
+    <link rel="stylesheet" href="universal-translate.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('farming-field-bg.jpg') center/cover no-repeat fixed;
+            background-color: #2E4635;
+            color: #333333;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(46, 70, 53, 0.6);
+            z-index: -1;
+        }
+
+        .header {
+            background: rgba(27, 59, 47, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 1.2rem 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 
+                0 1px 0 #FFA500,
+                0 2px 0 #FF8C00,
+                0 3px 5px rgba(0,0,0,0.3),
+                0 0 10px rgba(255,215,0,0.5);
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            color: #1B3B2F;
+            border: none;
+            padding: 0.7rem 1.3rem;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(251, 192, 45, 0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 192, 45, 0.4);
+            background: linear-gradient(45deg, #f7931e, #FBC02D);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #4CAF50, #FBC02D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-title p {
+            color: #FFFFFF;
+            font-size: 1.2rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+        }
+
+        .crop-info {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #2E4635;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .crop-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #FBC02D, #f7931e);
+        }
+
+        .crop-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .crop-name {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #2E4635;
+            margin-bottom: 0.5rem;
+        }
+
+        .crop-type {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: #FFFFFF;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .crop-description {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .guidance-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            overflow-x: auto;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-bottom: none;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1.8rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 150px;
+            position: relative;
+        }
+
+        .tab.active {
+            border-bottom-color: #FBC02D;
+            background: rgba(251, 192, 45, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .tab:hover {
+            background: rgba(251, 192, 45, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .tab-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-title {
+            font-weight: 600;
+            color: #2E4635;
+            margin-bottom: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .tab-subtitle {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .guidance-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 0 0 20px 20px;
+            padding: 3rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+            color: #2E4635;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: none;
+        }
+
+        .guidance-step {
+            display: none;
+        }
+
+        .guidance-step.active {
+            display: block;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            color: #2E4635;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 1.5rem;
+        }
+
+        .step-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2E4635;
+        }
+
+        .step-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-details {
+            background: rgba(46, 70, 53, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .step-details h3 {
+            color: #2E4635;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .step-details ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-details li {
+            padding: 0.7rem 0;
+            color: #555;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .step-details li:last-child {
+            border-bottom: none;
+        }
+
+        .step-details li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .step-tips {
+            background: rgba(251, 192, 45, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(251, 192, 45, 0.3);
+            position: relative;
+        }
+        
+        .step-tips::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #FBC02D, #f7931e);
+            border-radius: 2px;
+        }
+
+        .step-tips h3 {
+            color: #2E4635;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .tip-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(251, 192, 45, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .tip-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .tip-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tip-title {
+            font-weight: bold;
+            color: #2E4635;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .tip-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .timeline {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #FBC02D, #f7931e);
+        }
+
+        .timeline h3 {
+            color: #2E4635;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-item:hover {
+            transform: translateX(5px);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-date {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: #FFFFFF;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-right: 1.5rem;
+            min-width: 110px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            color: #2E4635;
+            margin-bottom: 0.3rem;
+            font-size: 1.1rem;
+        }
+
+        .timeline-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            color: #1B3B2F;
+            box-shadow: 0 8px 25px rgba(251, 192, 45, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(108, 117, 125, 0.9);
+            color: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(90, 98, 104, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 10px;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #FBC02D, #f7931e);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .guidance-tabs {
+                flex-direction: column;
+            }
+
+            .step-content {
+                grid-template-columns: 1fr;
+            }
+
+            .step-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>SmartKisan</h1>
+        </div>
+        <a href="crop-prediction.html" class="back-btn">← Back to Crops</a>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Your farming roadmap! 🗺️</h1>
+            <p>We've got your back! Follow these steps and you'll be harvesting like a pro. No guesswork needed!</p>
+        </div>
+
+        <div class="crop-info" id="cropInfo">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 16.67%"></div>
+        </div>
+
+        <div class="guidance-tabs">
+            <div class="tab active" data-step="1">
+                <div class="tab-icon">🌱</div>
+                <div class="tab-title">🌱 Get Your Soil Ready</div>
+                <div class="tab-subtitle">Start here!</div>
+            </div>
+            <div class="tab" data-step="2">
+                <div class="tab-icon">🌰</div>
+                <div class="tab-title">🌰 Pick the Best Seeds</div>
+                <div class="tab-subtitle">Quality matters!</div>
+            </div>
+            <div class="tab" data-step="3">
+                <div class="tab-icon">🌾</div>
+                <div class="tab-title">🌾 Time to Plant!</div>
+                <div class="tab-subtitle">Let's get growing</div>
+            </div>
+            <div class="tab" data-step="4">
+                <div class="tab-icon">💧</div>
+                <div class="tab-title">💧 Water Wisely</div>
+                <div class="tab-subtitle">Keep them hydrated</div>
+            </div>
+            <div class="tab" data-step="5">
+                <div class="tab-icon">🌿</div>
+                <div class="tab-title">🌿 Feed Your Plants</div>
+                <div class="tab-subtitle">Give them nutrients</div>
+            </div>
+            <div class="tab" data-step="6">
+                <div class="tab-icon">🛡️</div>
+                <div class="tab-title">🛡️ Keep Pests Away</div>
+                <div class="tab-subtitle">Protect your crops</div>
+            </div>
+        </div>
+
+        <div class="guidance-content">
+            <!-- Step 1: Soil Preparation -->
+            <div class="guidance-step active" id="step1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Soil Preparation</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-details">
+                        <h3>Essential Steps</h3>
+                        <ul>
+                            <li>Test soil pH and nutrient levels</li>
+                            <li>Remove weeds and debris from field</li>
+                            <li>Plow the field to 15-20 cm depth</li>
+                            <li>Level the field for uniform water distribution</li>
+                            <li>Add organic matter or compost</li>
+                            <li>Create proper drainage system</li>
+                        </ul>
+                    </div>
+                    <div class="step-tips">
+                        <h3>💡 Pro Tips</h3>
+                        <div class="tip-item">
+                            <div class="tip-title">Soil Testing</div>
+                            <div class="tip-description">Get your soil tested 2-3 weeks before planting to determine exact nutrient requirements.</div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-title">Organic Matter</div>
+                            <div class="tip-description">Add 5-10 tons of well-decomposed farmyard manure per acre for better soil structure.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Seed Selection -->
+            <div class="guidance-step" id="step2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Seed Selection & Treatment</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-details">
+                        <h3>Seed Requirements</h3>
+                        <ul>
+                            <li>Choose certified, disease-free seeds</li>
+                            <li>Select varieties suitable for your region</li>
+                            <li>Check seed germination rate (minimum 85%)</li>
+                            <li>Treat seeds with fungicides</li>
+                            <li>Use proper seed rate per acre</li>
+                            <li>Store seeds in cool, dry place</li>
+                        </ul>
+                    </div>
+                    <div class="step-tips">
+                        <h3>💡 Pro Tips</h3>
+                        <div class="tip-item">
+                            <div class="tip-title">Seed Treatment</div>
+                            <div class="tip-description">Treat seeds with Trichoderma or Pseudomonas for natural disease resistance.</div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-title">Variety Selection</div>
+                            <div class="tip-description">Choose high-yielding, disease-resistant varieties recommended for your area.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Sowing -->
+            <div class="guidance-step" id="step3">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Sowing Guidelines</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-details">
+                        <h3>Sowing Instructions</h3>
+                        <ul>
+                            <li>Sow at recommended depth (2-3 cm)</li>
+                            <li>Maintain proper row spacing</li>
+                            <li>Use seed drill for uniform sowing</li>
+                            <li>Sow during optimal weather conditions</li>
+                            <li>Cover seeds with fine soil</li>
+                            <li>Apply light irrigation after sowing</li>
+                        </ul>
+                    </div>
+                    <div class="step-tips">
+                        <h3>💡 Pro Tips</h3>
+                        <div class="tip-item">
+                            <div class="tip-title">Timing</div>
+                            <div class="tip-description">Sow during early morning or evening to avoid heat stress on seeds.</div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-title">Spacing</div>
+                            <div class="tip-description">Proper spacing ensures adequate sunlight and air circulation for healthy growth.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Irrigation -->
+            <div class="guidance-step" id="step4">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Irrigation Management</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-details">
+                        <h3>Water Requirements</h3>
+                        <ul>
+                            <li>Provide light irrigation immediately after sowing</li>
+                            <li>Maintain soil moisture at 60-70%</li>
+                            <li>Irrigate every 7-10 days during growth</li>
+                            <li>Increase frequency during flowering</li>
+                            <li>Reduce irrigation before harvest</li>
+                            <li>Use drip irrigation for water efficiency</li>
+                        </ul>
+                    </div>
+                    <div class="step-tips">
+                        <h3>💡 Pro Tips</h3>
+                        <div class="tip-item">
+                            <div class="tip-title">Water Conservation</div>
+                            <div class="tip-description">Use mulching to retain soil moisture and reduce irrigation frequency.</div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-title">Timing</div>
+                            <div class="tip-description">Irrigate early morning to minimize water loss through evaporation.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Fertilizers -->
+            <div class="guidance-step" id="step5">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Fertilizer Application</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-details">
+                        <h3>Nutrient Management</h3>
+                        <ul>
+                            <li>Apply basal dose of NPK fertilizers</li>
+                            <li>Use organic fertilizers for better soil health</li>
+                            <li>Apply nitrogen in split doses</li>
+                            <li>Use micronutrients as needed</li>
+                            <li>Apply fertilizers at root zone</li>
+                            <li>Follow soil test recommendations</li>
+                        </ul>
+                    </div>
+                    <div class="step-tips">
+                        <h3>💡 Pro Tips</h3>
+                        <div class="tip-item">
+                            <div class="tip-title">Organic Options</div>
+                            <div class="tip-description">Use vermicompost and bio-fertilizers for sustainable farming practices.</div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-title">Timing</div>
+                            <div class="tip-description">Apply fertilizers during active growth periods for maximum absorption.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Pest Control -->
+            <div class="guidance-step" id="step6">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Pest & Disease Management</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-details">
+                        <h3>Protection Measures</h3>
+                        <ul>
+                            <li>Monitor crops regularly for pests</li>
+                            <li>Use integrated pest management (IPM)</li>
+                            <li>Apply biological control methods</li>
+                            <li>Use chemical pesticides as last resort</li>
+                            <li>Maintain field hygiene</li>
+                            <li>Follow proper spray timing</li>
+                        </ul>
+                    </div>
+                    <div class="step-tips">
+                        <h3>💡 Pro Tips</h3>
+                        <div class="tip-item">
+                            <div class="tip-title">Natural Methods</div>
+                            <div class="tip-description">Use neem oil and other botanical pesticides for eco-friendly pest control.</div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-title">Early Detection</div>
+                            <div class="tip-description">Regular field visits help in early detection and control of pest problems.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <h3>📅 Farming Timeline</h3>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 1-2</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Soil Preparation</div>
+                    <div class="timeline-description">Field preparation, soil testing, and organic matter application</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 3</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Sowing</div>
+                    <div class="timeline-description">Seed treatment and sowing with proper spacing</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 4-8</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Early Growth</div>
+                    <div class="timeline-description">Irrigation, weeding, and initial fertilizer application</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 9-12</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Active Growth</div>
+                    <div class="timeline-description">Regular irrigation, pest monitoring, and nutrient management</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Week 13-16</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">Maturity</div>
+                    <div class="timeline-description">Final irrigation, pest control, and harvest preparation</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="downloadReport()">Download Complete Guide</button>
+            <button class="btn btn-primary" onclick="viewFinalDashboard()">View Complete Plan</button>
+            <button class="btn btn-secondary" onclick="viewSoilAnalysis()">Analyze Soil Image</button>
+            <button class="btn btn-secondary" onclick="viewClimateInsights()">Check Climate Data</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedCrop = {};
+
+        window.onload = function() {
+            const cropData = localStorage.getItem('selectedCrop');
+            if (cropData) {
+                selectedCrop = JSON.parse(cropData);
+                displayCropInfo();
+            } else {
+                alert('No crop selected. Please go back to crop selection.');
+                window.location.href = 'crop-prediction.html';
+            }
+        };
+
+        function displayCropInfo() {
+            document.getElementById('cropInfo').innerHTML = `
+                <div class="crop-icon">${selectedCrop.icon}</div>
+                <div class="crop-name">${selectedCrop.name}</div>
+                <div class="crop-type">${selectedCrop.type}</div>
+                <div class="crop-description">${selectedCrop.description}</div>
+            `;
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const step = parseInt(this.dataset.step);
+                switchToStep(step);
+            });
+        });
+
+        function switchToStep(step) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+
+            // Update content
+            document.querySelectorAll('.guidance-step').forEach(stepEl => {
+                stepEl.classList.remove('active');
+            });
+            document.getElementById(`step${step}`).classList.add('active');
+
+            // Update progress bar
+            const progress = (step / 6) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+
+            currentStep = step;
+        }
+
+        function downloadReport() {
+            // Create a simple report content
+            const reportContent = `
+                FARMING GUIDANCE REPORT
+                ======================
+                
+                Crop: ${selectedCrop.name}
+                Type: ${selectedCrop.type}
+                Expected Yield: ${selectedCrop.yield}
+                Profitability: ${selectedCrop.profitability}
+                
+                COMPLETE FARMING GUIDE
+                =====================
+                
+                1. SOIL PREPARATION
+                - Test soil pH and nutrient levels
+                - Remove weeds and debris
+                - Plow to 15-20 cm depth
+                - Add organic matter
+                
+                2. SEED SELECTION
+                - Choose certified seeds
+                - Check germination rate
+                - Treat with fungicides
+                
+                3. SOWING
+                - Sow at 2-3 cm depth
+                - Maintain proper spacing
+                - Use seed drill
+                
+                4. IRRIGATION
+                - Light irrigation after sowing
+                - Maintain 60-70% soil moisture
+                - Irrigate every 7-10 days
+                
+                5. FERTILIZERS
+                - Apply NPK fertilizers
+                - Use organic options
+                - Follow soil test recommendations
+                
+                6. PEST CONTROL
+                - Regular monitoring
+                - Use IPM methods
+                - Apply biological controls
+                
+                Generated by SatYield AI
+                Date: ${new Date().toLocaleDateString()}
+            `;
+
+            // Create and download file
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${selectedCrop.name}_Farming_Guide.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function viewClimateInsights() {
+            window.location.href = 'climate-insights.html';
+        }
+
+        function viewFinalDashboard() {
+            window.location.href = 'final-dashboard.html';
+        }
+
+        function viewSoilAnalysis() {
+            window.location.href = 'soil-analysis.html';
+        }
+    </script>
+    <script src="enhanced-translate.js"></script>
+</body>
+</html>
