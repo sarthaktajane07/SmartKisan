@@ -11,10 +11,7 @@ import {
   Sparkles,
   CheckCircle2,
   BarChart3,
-  UserCheck,
-  ShieldCheck,
-  MapPin,
-  Lock
+  MapPin
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useLocation } from '../context/LocationContext';
@@ -83,29 +80,6 @@ export default function Home() {
     { value: '25+', label: 'Supported Crops' }
   ];
 
-  const howItWorksSteps = [
-    {
-      step: '01',
-      title: 'Register as a Farmer',
-      desc: 'Create your free account in 30 seconds with mobile number or email. Access is 100% free for Indian farmers.'
-    },
-    {
-      step: '02',
-      title: 'Set Your Farm Location',
-      desc: 'Select your state and district or enable GPS. SatYield fetches live satellite telemetry and regional soil grids.'
-    },
-    {
-      step: '03',
-      title: 'Access Farmer Dashboard',
-      desc: 'View your real-time 7-day weather telemetry, soil health ratings, active crop cycle, and quick advisories.'
-    },
-    {
-      step: '04',
-      title: 'Run AI Prediction & Tools',
-      desc: 'Calculate yields, simulate chemical fertilizer dosages, get crop recommendations, and rent farm machinery.'
-    }
-  ];
-
   return (
     <div className="space-y-20 pb-20">
       {/* Hero Section */}
@@ -133,45 +107,26 @@ export default function Home() {
                 Mitigate climate volatility, predict harvest yield accurately months ahead, optimize soil fertilizers, and rent verified farm machinery on-demand.
               </p>
 
-              {/* Dynamic CTAs based on Auth state */}
-              {isAuthenticated ? (
-                <div className="flex flex-wrap items-center gap-4 pt-2">
-                  <Link
-                    to="/dashboard"
-                    className="flex items-center gap-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-emerald-950 font-bold px-7 py-3.5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition text-sm sm:text-base"
-                  >
-                    <span>Open Farmer Dashboard</span>
-                    <ArrowRight size={18} />
-                  </Link>
+              {/* CTAs */}
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <Link
+                  to={isAuthenticated ? '/ai-yield' : '/login'}
+                  state={!isAuthenticated ? { from: '/ai-yield' } : undefined}
+                  className="flex items-center gap-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-emerald-950 font-bold px-7 py-3.5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition text-sm sm:text-base"
+                >
+                  <Cpu size={18} />
+                  <span>Try AI Yield Predictor</span>
+                  <ArrowRight size={18} />
+                </Link>
 
-                  <Link
-                    to="/ai-yield"
-                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-2xl backdrop-blur-xs transition text-sm sm:text-base"
-                  >
-                    <Cpu size={18} />
-                    <span>AI Yield Predictor</span>
-                  </Link>
-                </div>
-              ) : (
-                <div className="flex flex-wrap items-center gap-4 pt-2">
-                  <Link
-                    to="/signup"
-                    className="flex items-center gap-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-emerald-950 font-bold px-7 py-3.5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition text-sm sm:text-base"
-                  >
-                    <UserCheck size={18} />
-                    <span>Register as a Farmer</span>
-                    <ArrowRight size={18} />
-                  </Link>
-
-                  <Link
-                    to="/login"
-                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-2xl backdrop-blur-xs transition text-sm sm:text-base"
-                  >
-                    <Lock size={18} />
-                    <span>Farmer Login</span>
-                  </Link>
-                </div>
-              )}
+                <Link
+                  to={isAuthenticated ? '/dashboard' : '/login'}
+                  state={!isAuthenticated ? { from: '/dashboard' } : undefined}
+                  className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3.5 rounded-2xl backdrop-blur-xs transition text-sm sm:text-base"
+                >
+                  <span>Go to Dashboard</span>
+                </Link>
+              </div>
 
               {/* Farmer Trust Proof */}
               <div className="pt-6 border-t border-emerald-800/60 flex items-center gap-6 text-xs text-emerald-200">
@@ -186,140 +141,68 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Column: Dynamic Hero Right Card */}
+            {/* Right Column: Live Telemetry Preview Card */}
             <div className="lg:col-span-5">
-              {isAuthenticated ? (
-                /* Logged-in Farmer Live Quick Preview */
-                <div className="bg-emerald-900/60 backdrop-blur-md border border-emerald-700/60 rounded-3xl p-6 shadow-2xl space-y-6">
-                  <div className="flex items-center justify-between pb-4 border-b border-emerald-800">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center font-bold text-lg">
-                        👨‍🌾
-                      </div>
-                      <div>
-                        <div className="text-xs text-emerald-300">Logged in Farmer</div>
-                        <div className="text-base font-bold text-white">{user?.name || 'Farmer'}</div>
-                      </div>
+              <div className="bg-emerald-900/60 backdrop-blur-md border border-emerald-700/60 rounded-3xl p-6 shadow-2xl space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-emerald-800">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center font-bold text-lg">
+                      📍
                     </div>
-                    <Link
-                      to="/city-selection"
-                      className="text-xs font-semibold text-amber-300 hover:underline flex items-center gap-1"
-                    >
-                      <MapPin size={12} />
-                      <span>{city}</span>
-                    </Link>
-                  </div>
-
-                  {/* Weather Pill */}
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div className="bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800">
-                      <div className="text-xs text-emerald-300">Temp</div>
-                      <div className="text-lg font-extrabold text-amber-300">{weather?.temperature ?? 29}°C</div>
-                    </div>
-                    <div className="bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800">
-                      <div className="text-xs text-emerald-300">Humidity</div>
-                      <div className="text-lg font-extrabold text-white">{weather?.humidity ?? 64}%</div>
-                    </div>
-                    <div className="bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800">
-                      <div className="text-xs text-emerald-300">Precipitation</div>
-                      <div className="text-lg font-extrabold text-white">{weather?.rainfall ?? 0} mm</div>
+                    <div>
+                      <div className="text-xs text-emerald-300">Active Location</div>
+                      <div className="text-base font-bold text-white">{city}, {state}</div>
                     </div>
                   </div>
-
-                  {/* AI Instant Recommendation Preview */}
-                  <div className="bg-gradient-to-r from-emerald-800/80 to-teal-900/80 p-4 rounded-2xl border border-emerald-700/80 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                        <Sparkles size={14} /> AI Recommendation
-                      </span>
-                      <span className="text-[10px] bg-emerald-700 px-2 py-0.5 rounded-full text-emerald-200">
-                        High Confidence
-                      </span>
-                    </div>
-                    <p className="text-xs text-emerald-100 leading-relaxed">
-                      Optimal sowing conditions for <strong>Soybean & Cotton</strong> in {city} region. Projected profitability is <strong>88-95%</strong>.
-                    </p>
-                  </div>
-
                   <Link
-                    to="/dashboard"
-                    className="block text-center w-full bg-emerald-800 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs transition"
+                    to={isAuthenticated ? '/city-selection' : '/login'}
+                    state={!isAuthenticated ? { from: '/city-selection' } : undefined}
+                    className="text-xs font-semibold text-amber-300 hover:underline flex items-center gap-1"
                   >
-                    Open Full Dashboard →
+                    <MapPin size={12} />
+                    <span>Change</span>
                   </Link>
                 </div>
-              ) : (
-                /* Guest "Get started in 3 steps" Card */
-                <div className="bg-emerald-900/70 backdrop-blur-md border border-emerald-700/60 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-6">
-                  <div className="flex items-center justify-between pb-3 border-b border-emerald-800/80">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-amber-400 text-emerald-950 flex items-center justify-center font-black text-sm">
-                        ✨
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-white">Get Started in 3 Steps</h3>
-                        <p className="text-[11px] text-emerald-300">Quick onboarding for farmers</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-400/30">
-                      100% Free
-                    </span>
+
+                {/* Weather Pill */}
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800">
+                    <div className="text-xs text-emerald-300">Temp</div>
+                    <div className="text-lg font-extrabold text-amber-300">{weather?.temperature ?? 29}°C</div>
                   </div>
-
-                  <div className="space-y-4 text-xs">
-                    <div className="flex items-start gap-3 bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800/80">
-                      <div className="w-6 h-6 rounded-lg bg-amber-400/20 text-amber-300 font-extrabold flex items-center justify-center shrink-0">
-                        1
-                      </div>
-                      <div>
-                        <strong className="text-white block">Create Free Account</strong>
-                        <span className="text-emerald-200/80 text-[11px]">
-                          Quick sign up with your name & state or instant OTP login.
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800/80">
-                      <div className="w-6 h-6 rounded-lg bg-amber-400/20 text-amber-300 font-extrabold flex items-center justify-center shrink-0">
-                        2
-                      </div>
-                      <div>
-                        <strong className="text-white block">Detect Soil & Climate</strong>
-                        <span className="text-emerald-200/80 text-[11px]">
-                          Automated satellite telemetry syncs your local N-P-K & forecasts.
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800/80">
-                      <div className="w-6 h-6 rounded-lg bg-amber-400/20 text-amber-300 font-extrabold flex items-center justify-center shrink-0">
-                        3
-                      </div>
-                      <div>
-                        <strong className="text-white block">Maximize Crop Profit</strong>
-                        <span className="text-emerald-200/80 text-[11px]">
-                          Unlock AI Yield predictions, fertilizer dosing, and machinery rental.
-                        </span>
-                      </div>
-                    </div>
+                  <div className="bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800">
+                    <div className="text-xs text-emerald-300">Humidity</div>
+                    <div className="text-lg font-extrabold text-white">{weather?.humidity ?? 64}%</div>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-2 pt-2">
-                    <Link
-                      to="/signup"
-                      className="text-center bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-emerald-950 font-bold py-2.5 rounded-xl text-xs transition shadow"
-                    >
-                      Sign Up Now
-                    </Link>
-                    <Link
-                      to="/login"
-                      className="text-center bg-emerald-800 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs transition"
-                    >
-                      Farmer Login
-                    </Link>
+                  <div className="bg-emerald-950/50 p-3 rounded-2xl border border-emerald-800">
+                    <div className="text-xs text-emerald-300">Precipitation</div>
+                    <div className="text-lg font-extrabold text-white">{weather?.rainfall ?? 0} mm</div>
                   </div>
                 </div>
-              )}
+
+                {/* AI Instant Recommendation Preview */}
+                <div className="bg-gradient-to-r from-emerald-800/80 to-teal-900/80 p-4 rounded-2xl border border-emerald-700/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                      <Sparkles size={14} /> AI Recommendation
+                    </span>
+                    <span className="text-[10px] bg-emerald-700 px-2 py-0.5 rounded-full text-emerald-200">
+                      High Confidence
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-100 leading-relaxed">
+                    Optimal sowing conditions for <strong>Soybean & Cotton</strong> in {city} region. Projected profitability is <strong>88-95%</strong>.
+                  </p>
+                </div>
+
+                <Link
+                  to={isAuthenticated ? '/crop-prediction' : '/login'}
+                  state={!isAuthenticated ? { from: '/crop-prediction' } : undefined}
+                  className="block text-center w-full bg-emerald-800 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs transition"
+                >
+                  View Full Crop Suggestions →
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -341,48 +224,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it Works Section */}
-      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-28">
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-3.5 py-1 rounded-full border border-amber-300">
-            How SatYield Works
-          </span>
-          <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-[#1B3B2F]">
-            Simple, Sequential & Farmer-Friendly
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600">
-            Get accurate agronomic decisions in 4 easy steps without complicated technical setups.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {howItWorksSteps.map((item, idx) => (
-            <div
-              key={idx}
-              className="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-4"
-            >
-              <div>
-                <span className="font-heading text-4xl font-extrabold text-amber-500/80 block mb-2">
-                  {item.step}
-                </span>
-                <h3 className="font-heading text-lg font-bold text-gray-900 mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-              <div className="pt-2 border-t border-gray-100 flex items-center text-xs text-emerald-700 font-semibold gap-1">
-                <CheckCircle2 size={14} className="text-emerald-600" />
-                <span>Verified Step</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Feature Grid Section */}
-      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-28">
+      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">
             Complete Farming Suite
@@ -398,7 +241,6 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((f, idx) => {
             const Icon = f.icon;
-            // If logged in: go directly to tool. If guest: send to /login with state.from
             const destination = isAuthenticated ? f.link : '/login';
             const linkState = isAuthenticated ? undefined : { from: f.link };
 
@@ -429,7 +271,7 @@ export default function Home() {
                 </div>
 
                 <div className="pt-6 mt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-emerald-700 group-hover:text-emerald-900">
-                  <span>{isAuthenticated ? 'Open Tool' : 'Login to Use'}</span>
+                  <span>Open Tool</span>
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition" />
                 </div>
               </Link>
