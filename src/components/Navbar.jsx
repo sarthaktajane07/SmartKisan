@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useLocation as useRouterLocation } from 'react-router-dom';
-import { Sprout, MapPin, Globe, User, LogOut, Menu, X, ChevronDown, Sparkles } from 'lucide-react';
+import { Link, useLocation as useRouterLocation, useNavigate } from 'react-router-dom';
+import { MapPin, Globe, User, LogOut, Menu, X, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useLocation } from '../context/LocationContext';
 import { useAuth } from '../context/AuthContext';
@@ -10,11 +10,18 @@ export default function Navbar() {
   const { city, state } = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
   const routerLocation = useRouterLocation();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
-  const navLinks = [
-    { name: t('nav.home'), path: '/' },
+  const handleLogout = () => {
+    logout();
+    setMobileMenuOpen(false);
+    navigate('/');
+  };
+
+  // Logged-in full application menu
+  const authNavLinks = [
     { name: t('nav.dashboard'), path: '/dashboard' },
     { name: t('nav.aiYield'), path: '/ai-yield', badge: 'AI' },
     { name: t('nav.cropPrediction'), path: '/crop-prediction' },
@@ -24,6 +31,13 @@ export default function Navbar() {
     { name: t('nav.rentals'), path: '/rentals', highlight: true }
   ];
 
+  // Logged-out public menu
+  const guestNavLinks = [
+    { name: t('nav.home') || 'Home', path: '/' },
+    { name: 'Features', path: '/#features' },
+    { name: 'How it Works', path: '/#how-it-works' }
+  ];
+
   const languages = [
     { code: 'en', label: 'English (EN)' },
     { code: 'hi', label: 'हिन्दी (Hindi)' },
@@ -31,12 +45,14 @@ export default function Navbar() {
     { code: 'pa', label: 'ਪੰਜਾਬੀ (Punjabi)' }
   ];
 
+  const logoTarget = isAuthenticated ? '/dashboard' : '/';
+
   return (
     <header className="sticky top-0 z-40 bg-[#1B3B2F]/95 backdrop-blur-md text-white border-b border-emerald-800/40 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to={logoTarget} className="flex items-center gap-3 group">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-200 text-emerald-950 flex items-center justify-center font-black text-2xl shadow-md group-hover:scale-105 transition">
               🌾
             </div>
@@ -55,40 +71,61 @@ export default function Navbar() {
 
           {/* Desktop Nav Items */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {navLinks.map((item) => {
-              const active = routerLocation.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`relative px-3 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 ${
-                    active
-                      ? 'bg-emerald-800 text-amber-300 shadow-inner'
-                      : 'text-emerald-100 hover:text-white hover:bg-emerald-800/50'
-                  } ${item.highlight ? 'border border-amber-400/40 text-amber-300' : ''}`}
-                >
-                  {item.name}
-                  {item.badge && (
-                    <span className="bg-amber-400 text-emerald-950 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
+            {isAuthenticated ? (
+              authNavLinks.map((item) => {
+                const active = routerLocation.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`relative px-3 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 ${
+                      active
+                        ? 'bg-emerald-800 text-amber-300 shadow-inner'
+                        : 'text-emerald-100 hover:text-white hover:bg-emerald-800/50'
+                    } ${item.highlight ? 'border border-amber-400/40 text-amber-300' : ''}`}
+                  >
+                    {item.name}
+                    {item.badge && (
+                      <span className="bg-amber-400 text-emerald-950 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })
+            ) : (
+              guestNavLinks.map((item) => {
+                const active = routerLocation.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
+                      active
+                        ? 'bg-emerald-800 text-amber-300 shadow-inner'
+                        : 'text-emerald-100 hover:text-white hover:bg-emerald-800/50'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })
+            )}
           </nav>
 
           {/* Right Controls: Location + Language + User */}
           <div className="hidden sm:flex items-center gap-3">
-            {/* Active Location Pill */}
-            <Link
-              to="/city-selection"
-              className="flex items-center gap-1.5 bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-200 hover:text-white transition shadow-sm"
-              title="Click to change location"
-            >
-              <MapPin size={14} className="text-amber-400" />
-              <span>{city}, {state}</span>
-            </Link>
+            {/* Active Location Pill: ONLY when logged in */}
+            {isAuthenticated && (
+              <Link
+                to="/city-selection"
+                className="flex items-center gap-1.5 bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-200 hover:text-white transition shadow-sm"
+                title="Click to change location"
+              >
+                <MapPin size={14} className="text-amber-400" />
+                <span>{city}, {state}</span>
+              </Link>
+            )}
 
             {/* Language Selector */}
             <div className="relative">
@@ -129,10 +166,10 @@ export default function Navbar() {
                   className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 text-emerald-950 font-bold px-3.5 py-1.5 rounded-xl text-xs shadow-sm hover:scale-105 transition"
                 >
                   <User size={14} />
-                  <span className="truncate max-w-[100px]">{user.name}</span>
+                  <span className="truncate max-w-[110px]">{user?.name || 'Farmer'}</span>
                 </Link>
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   title="Sign Out"
                   className="p-1.5 text-emerald-300 hover:text-red-300 rounded-lg transition"
                 >
@@ -145,13 +182,13 @@ export default function Navbar() {
                   to="/login"
                   className="text-xs font-semibold text-emerald-100 hover:text-white px-3 py-1.5"
                 >
-                  {t('nav.login')}
+                  {t('nav.login') || 'Login'}
                 </Link>
                 <Link
                   to="/signup"
                   className="bg-gradient-to-r from-amber-400 to-amber-500 text-emerald-950 text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-md hover:scale-105 transition"
                 >
-                  {t('nav.signup')}
+                  {t('nav.signup') || 'Sign Up'}
                 </Link>
               </div>
             )}
@@ -159,13 +196,15 @@ export default function Navbar() {
 
           {/* Mobile Menu Hamburger */}
           <div className="flex items-center gap-2 lg:hidden">
-            <Link
-              to="/city-selection"
-              className="flex items-center gap-1 bg-emerald-900 border border-emerald-700 px-2 py-1 rounded-lg text-xs text-emerald-200"
-            >
-              <MapPin size={12} className="text-amber-400" />
-              <span>{city}</span>
-            </Link>
+            {isAuthenticated && (
+              <Link
+                to="/city-selection"
+                className="flex items-center gap-1 bg-emerald-900 border border-emerald-700 px-2 py-1 rounded-lg text-xs text-emerald-200"
+              >
+                <MapPin size={12} className="text-amber-400" />
+                <span>{city}</span>
+              </Link>
+            )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 transition"
@@ -178,27 +217,44 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#1B3B2F] border-b border-emerald-800 px-4 pt-2 pb-6 space-y-2 animate-in slide-in-from-top-4">
+        <div className="lg:hidden bg-[#1B3B2F] border-b border-emerald-800 px-4 pt-2 pb-6 space-y-3 animate-in slide-in-from-top-4">
           <div className="grid grid-cols-2 gap-2 pt-2 pb-3 border-b border-emerald-800/60">
-            {navLinks.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between ${
-                  routerLocation.pathname === item.path
-                    ? 'bg-emerald-800 text-amber-300'
-                    : 'text-emerald-100 bg-emerald-900/40 hover:bg-emerald-800'
-                }`}
-              >
-                <span>{item.name}</span>
-                {item.badge && (
-                  <span className="bg-amber-400 text-emerald-950 text-[9px] font-bold px-1.5 py-0.2 rounded-full">
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            ))}
+            {isAuthenticated ? (
+              authNavLinks.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between ${
+                    routerLocation.pathname === item.path
+                      ? 'bg-emerald-800 text-amber-300'
+                      : 'text-emerald-100 bg-emerald-900/40 hover:bg-emerald-800'
+                  }`}
+                >
+                  <span>{item.name}</span>
+                  {item.badge && (
+                    <span className="bg-amber-400 text-emerald-950 text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              ))
+            ) : (
+              guestNavLinks.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between ${
+                    routerLocation.pathname === item.path
+                      ? 'bg-emerald-800 text-amber-300'
+                      : 'text-emerald-100 bg-emerald-900/40 hover:bg-emerald-800'
+                  }`}
+                >
+                  <span>{item.name}</span>
+                </Link>
+              ))
+            )}
           </div>
 
           {/* Mobile Languages */}
@@ -227,10 +283,12 @@ export default function Navbar() {
           <div className="pt-2 flex items-center justify-between">
             {isAuthenticated ? (
               <div className="flex items-center justify-between w-full">
-                <span className="text-xs text-emerald-200">Logged in as: <strong className="text-white">{user.name}</strong></span>
+                <span className="text-xs text-emerald-200">
+                  Logged in as: <strong className="text-white">{user?.name || 'Farmer'}</strong>
+                </span>
                 <button
-                  onClick={logout}
-                  className="text-xs text-red-300 hover:text-red-200 font-medium"
+                  onClick={handleLogout}
+                  className="text-xs text-red-300 hover:text-red-200 font-semibold"
                 >
                   Sign Out
                 </button>
